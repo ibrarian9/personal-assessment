@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('mata_pelajarans', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_mapel', 20)->unique();
+            $table->string('nama_mapel', 150);
+            $table->string('fase', 20)->default('Fase E'); // Fase E (Kelas X), Fase F (Kelas XI-XII)
+            $table->string('tingkat', 20)->default('Kelas X');
+            $table->decimal('kkm', 5, 2)->default(75.00); // Kriteria Ketuntasan Minimal / Ketercapaian TP
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('mata_pelajarans');
+    }
+};
