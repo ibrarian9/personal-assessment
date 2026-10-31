@@ -35,8 +35,15 @@ class DatabaseSeeder extends Seeder
         Setting::set('kkm_default', '75', 'Kriteria Ketuntasan Minimal / Ketercapaian TP');
         Setting::set('kurikulum', 'Kurikulum Merdeka (Fase E & F)', 'Kurikulum');
         Setting::set('kepala_sekolah', 'Dr. H. Bambang Sutrisno, M.Pd.', 'Kepala Sekolah');
-        Setting::set('nip_kepala_sekolah', '196805121994031005', 'NIP Kepala Sekolah');
-        Setting::set('ai_provider', 'gemini', 'AI Provider');
+        if (!Setting::get('ai_provider')) {
+            Setting::set('ai_provider', config('services.ai.provider', 'openai'), 'AI Provider');
+        }
+        if (config('services.openai.api_key')) {
+            Setting::set('openai_api_key', config('services.openai.api_key'), 'OpenAI API Key');
+        }
+        if (config('services.gemini.api_key')) {
+            Setting::set('gemini_api_key', config('services.gemini.api_key'), 'Gemini API Key');
+        }
 
         // 3. Data Siswa SMA (Kelas X-A)
         $siswaData = [

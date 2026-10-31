@@ -65,7 +65,7 @@
                         <td class="border border-slate-400 py-1.5 px-2 font-mono font-bold">{{ $s->nisn }}</td>
                         <td class="border border-slate-400 py-1.5 px-3 font-semibold">{{ $s->nama }}</td>
                         <td class="border border-slate-400 py-1.5 px-2 text-center">{{ $s->kelas }}</td>
-                        <td class="border border-slate-400 py-1.5 px-2 text-center">{{ $s->gaya_belajar }}</td>
+                        <td class="border border-slate-400 py-1.5 px-2 text-center">{{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $s->gaya_belajar) }}</td>
                         <td class="border border-slate-400 py-1.5 px-2 text-center font-mono font-bold text-emerald-700">{{ $tuntas }}</td>
                         <td class="border border-slate-400 py-1.5 px-2 text-center font-mono font-bold text-rose-700">{{ $belum }}</td>
                         <td class="border border-slate-400 py-1.5 px-2 text-center font-mono font-extrabold text-teal-900">{{ $avg }}</td>
@@ -93,7 +93,7 @@
             </div>
         </div>
         <div class="text-right">
-            <p>Guru Mata Pelajaran / Wali Kelas</p>
+            <p>Guru Mata Pelajaran dan Wali Kelas</p>
             <div class="mt-16">
                 <p class="font-bold underline">( Dra. Sri Wahyuni, M.Pd. )</p>
                 <p class="text-slate-500 mt-0.5">NIP. 197508192002122003</p>

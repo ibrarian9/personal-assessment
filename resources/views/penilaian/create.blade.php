@@ -10,9 +10,8 @@
         <p class="text-sm text-slate-500 mt-1">Pencatatan skor sumatif siswa SMA untuk butir Tujuan Pembelajaran tertentu</p>
     </div>
     <div>
-        <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-            <span>Ke Matriks Grid</span>
+        <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
+            Ke Matriks Grid
         </a>
     </div>
 </div>
@@ -53,7 +52,7 @@
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="catatan">Catatan / Umpan Balik Guru</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="catatan">Catatan dan Umpan Balik Guru</label>
             <textarea name="catatan" id="catatan" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all" rows="3" placeholder="Catatan perkembangan atau rekomendasi penguatan...">{{ old('catatan') }}</textarea>
         </div>
 

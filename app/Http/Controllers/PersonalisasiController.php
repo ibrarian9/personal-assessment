@@ -59,10 +59,38 @@ class PersonalisasiController extends Controller
     public function show(Siswa $siswa): View
     {
         $siswa->load(['nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran', 'personalisasis']);
-        $personalisasi = $siswa->personalisasis->first();
+        $existingPersonalisasi = $siswa->personalisasis->first();
+        $isFromDatabase = $existingPersonalisasi !== null;
 
-        if (!$personalisasi) {
+        if (!$existingPersonalisasi) {
             $personalisasi = $this->aiService->generateForSiswa($siswa);
+            $siswa->load(['nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran']);
+            $sumberTampilan = 'baru_dibuat';
+        } else {
+            $personalisasi = $existingPersonalisasi;
+            $sumberTampilan = 'database';
+
+            // Pastikan setiap butir TP memiliki 3 catatan rekomendasi tindak lanjut AI
+            $needsReload = false;
+            foreach ($siswa->nilaiSumatifTps as $nst) {
+                if (empty($nst->catatan) || !str_contains($nst->catatan, "\n")) {
+                    $nst->update([
+                        'catatan' => $this->aiService->generateTpRecommendation($nst, $siswa->gaya_belajar ?? 'Visual')
+                    ]);
+                    $needsReload = true;
+                }
+            }
+
+            // Pastikan distribusi gaya belajar VARK tersimpan
+            if (empty($personalisasi->getRawOriginal('distribusi_gaya_belajar'))) {
+                $personalisasi->update([
+                    'distribusi_gaya_belajar' => AiPersonalizationService::hitungDistribusiVark($siswa->gaya_belajar ?? 'Visual', $siswa->id)
+                ]);
+            }
+
+            if ($needsReload) {
+                $siswa->load(['nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran']);
+            }
         }
 
         // Parse list of remedial TPs
@@ -71,7 +99,7 @@ class PersonalisasiController extends Controller
             $remedialTps = json_decode($personalisasi->daftar_tp_remedial, true) ?? [];
         }
 
-        return view('personalisasi.show', compact('siswa', 'personalisasi', 'remedialTps'));
+        return view('personalisasi.show', compact('siswa', 'personalisasi', 'remedialTps', 'isFromDatabase', 'sumberTampilan'));
     }
 
     /**
@@ -80,16 +108,28 @@ class PersonalisasiController extends Controller
     public function aiAnalyze(Siswa $siswa): RedirectResponse
     {
         $personalisasi = $this->aiService->generateForSiswa($siswa);
+        $source = $this->aiService->getLastSource();
+        $reason = $this->aiService->getLastReason();
+
+        if ($source === 'Gemini') {
+            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh Google Gemini (gemini-3.5-flash) dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+        } elseif ($source === 'OpenAI') {
+            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh OpenAI (gpt-4o-mini) dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+        } else {
+            $keterangan = $reason ? " ({$reason})" : '';
+            $msg = "Analisis Diagnostik untuk {$siswa->nama} diproses menggunakan Fallback Heuristik Kurikulum Merdeka{$keterangan} dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+        }
 
         return redirect()->route('personalisasi.show', $siswa)
-            ->with('success', "Analisis Diagnostik AI untuk {$siswa->nama} berhasil diproses dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).");
+            ->with('success', $msg);
     }
 
     public function generate(): RedirectResponse
     {
         $count = $this->aiService->generateAll();
+        $source = $this->aiService->getLastSource();
         return redirect()->route('personalisasi.index')
-            ->with('success', "Engine Personalisasi AI Kurikulum Merdeka berhasil menganalisis & menyimpan {$count} siswa SMA ke database.");
+            ->with('success', "Engine Personalisasi AI Kurikulum Merdeka berhasil menganalisis & menyimpan {$count} siswa SMA ke database (Sumber: {$source}).");
     }
 
     public function updateCatatan(Request $request, Siswa $siswa): RedirectResponse
@@ -98,11 +138,12 @@ class PersonalisasiController extends Controller
             'catatan_guru' => 'nullable|string',
         ]);
 
-        Personalisasi::where('siswa_id', $siswa->id)->update([
-            'catatan_guru' => $request->input('catatan_guru'),
-        ]);
+        Personalisasi::updateOrCreate(
+            ['siswa_id' => $siswa->id],
+            ['catatan_guru' => $request->input('catatan_guru')]
+        );
 
         return redirect()->route('personalisasi.show', $siswa)
-            ->with('success', 'Catatan & Rencana Intervensi Guru berhasil disimpan.');
+            ->with('success', 'Catatan & Rencana Intervensi Guru berhasil disimpan dan diperbarui pada Status Diagnostik.');
     }
 }

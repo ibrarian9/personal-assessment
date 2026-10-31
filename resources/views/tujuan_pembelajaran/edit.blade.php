@@ -10,9 +10,8 @@
         <p class="text-sm text-slate-500 mt-1">Perbarui butir Tujuan Pembelajaran <strong>{{ $tujuanPembelajaran->kode_tp }}</strong></p>
     </div>
     <div>
-        <a href="{{ route('tujuan-pembelajaran.index', ['mata_pelajaran_id' => $tujuanPembelajaran->lingkupMateri->mata_pelajaran_id]) }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-            <span>Kembali</span>
+        <a href="{{ route('tujuan-pembelajaran.index', ['mata_pelajaran_id' => $tujuanPembelajaran->lingkupMateri->mata_pelajaran_id]) }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
+            Kembali
         </a>
     </div>
 </div>
@@ -46,7 +45,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="target_ketercapaian">Target Ketercapaian TP / KKM *</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="target_ketercapaian">Target Ketercapaian TP (KKM) *</label>
                 <input type="number" step="0.5" min="0" max="100" name="target_ketercapaian" id="target_ketercapaian" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all font-mono" value="{{ old('target_ketercapaian', $tujuanPembelajaran->target_ketercapaian) }}" required>
             </div>
             <div>

@@ -19,7 +19,7 @@
 <x-card>
     <!-- Filter & Search Bar -->
     <form method="GET" action="{{ route('siswa.index') }}" class="flex flex-wrap items-center gap-3">
-        <x-search-input name="search" placeholder="Cari nama / NISN / email..." :value="request('search')" />
+        <x-search-input name="search" placeholder="Cari nama, NISN, atau email..." :value="request('search')" />
 
         <x-filter-select name="kelas">
             <option value="">Semua Kelas</option>
@@ -36,7 +36,7 @@
             <option value="Visual" {{ request('gaya_belajar') == 'Visual' ? 'selected' : '' }}>Visual</option>
             <option value="Auditori" {{ request('gaya_belajar') == 'Auditori' ? 'selected' : '' }}>Auditori</option>
             <option value="Kinestetik" {{ request('gaya_belajar') == 'Kinestetik' ? 'selected' : '' }}>Kinestetik</option>
-            <option value="Baca/Tulis" {{ request('gaya_belajar') == 'Baca/Tulis' ? 'selected' : '' }}>Baca/Tulis</option>
+            <option value="Baca/Tulis" {{ request('gaya_belajar') == 'Baca/Tulis' ? 'selected' : '' }}>Baca dan Tulis</option>
         </x-filter-select>
 
         <x-filter-select name="status">
@@ -79,7 +79,7 @@
                     <x-td class="font-medium text-slate-800">{{ $s->kelas }}</x-td>
                     <x-td align="center">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-800">
-                            {{ $s->gaya_belajar }}
+                            {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $s->gaya_belajar) }}
                         </span>
                     </x-td>
                     <x-td align="center" class="font-mono font-bold text-teal-700">
@@ -87,7 +87,7 @@
                     </x-td>
                     <x-td align="center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $s->jumlah_tp_belum_tuntas == 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                            {{ $s->jumlah_tp_tuntas }} Tuntas / {{ $s->jumlah_tp_belum_tuntas }} Remedial
+                            {{ $s->jumlah_tp_tuntas }} Tuntas, {{ $s->jumlah_tp_belum_tuntas }} Remedial
                         </span>
                     </x-td>
                     <x-td align="center">

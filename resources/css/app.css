@@ -26,6 +26,30 @@ body {
   color: #0f172a;
 }
 
+/* R-39: Accessible interaction affordances */
+@layer base {
+  a[href],
+  button,
+  select,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  label[for],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"] {
+    cursor: pointer;
+  }
+
+  :disabled,
+  [disabled],
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

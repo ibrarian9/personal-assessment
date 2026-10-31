@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Page Header -->
-<x-page-header title="Mata Pelajaran SMA" subtitle="Kelola kurikulum mata pelajaran, fase (E/F), tingkat kelas, dan KKM / kriteria ketuntasan">
+<x-page-header title="Mata Pelajaran SMA" subtitle="Kelola kurikulum mata pelajaran, jenjang Fase E dan Fase F, tingkat kelas, serta KKM kriteria ketuntasan">
     <x-slot:actions>
         <x-button variant="primary" href="{{ route('matapelajaran.create') }}">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -19,7 +19,7 @@
 <x-card>
     <!-- Filter Bar -->
     <form method="GET" action="{{ route('matapelajaran.index') }}" class="flex flex-wrap items-center gap-3">
-        <x-search-input name="search" placeholder="Cari nama / kode mapel..." :value="request('search')" />
+        <x-search-input name="search" placeholder="Cari nama atau kode mapel..." :value="request('search')" />
 
         <x-filter-select name="fase">
             <option value="">Semua Fase</option>

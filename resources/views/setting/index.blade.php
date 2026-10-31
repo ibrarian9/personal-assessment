@@ -28,7 +28,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="kkm_default">KKM / Kriteria Ketuntasan TP Default *</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="kkm_default">KKM dan Kriteria Ketuntasan TP Default *</label>
                         <input type="number" step="0.5" min="0" max="100" name="kkm_default" id="kkm_default" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all font-mono" value="{{ old('kkm_default', $kkmDefault) }}" required>
                     </div>
                     <div>
@@ -65,7 +65,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="ai_provider">Provider AI Aktif</label>
                         <select name="ai_provider" id="ai_provider" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-white text-slate-700 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all">
-                            <option value="gemini" {{ old('ai_provider', $aiProvider) == 'gemini' ? 'selected' : '' }}>Google Gemini API (Disarankan - gemini-1.5-flash / gemini-2.0-flash)</option>
+                            <option value="gemini" {{ old('ai_provider', $aiProvider) == 'gemini' ? 'selected' : '' }}>Google Gemini API (Aktif - gemini-3.5-flash)</option>
                             <option value="openai" {{ old('ai_provider', $aiProvider) == 'openai' ? 'selected' : '' }}>OpenAI API (gpt-4o-mini)</option>
                             <option value="fallback" {{ old('ai_provider', $aiProvider) == 'fallback' ? 'selected' : '' }}>Mode Heuristik Offline (Tanpa Koneksi API)</option>
                         </select>
@@ -109,7 +109,7 @@
                 <h3 class="text-base font-bold text-white">Prinsip Asesmen Kurikulum Merdeka</h3>
             </div>
             <p class="text-xs text-slate-300 leading-relaxed">
-                Asesmen sumatif berfokus pada ketercapaian setiap butir <strong>Tujuan Pembelajaran (TP)</strong> pada masing-masing <strong>Lingkup Materi</strong>. Nilai akhir dihitung dari akumulasi rerata TP dengan Kriteria Ketercapaian Tujuan Pembelajaran (KKTP / KKM).
+                Asesmen sumatif berfokus pada ketercapaian setiap butir <strong>Tujuan Pembelajaran (TP)</strong> pada masing-masing <strong>Lingkup Materi</strong>. Nilai akhir dihitung dari akumulasi rerata TP dengan Kriteria Ketercapaian Tujuan Pembelajaran (KKTP atau KKM).
             </p>
             <div class="pt-2 text-xs text-teal-300 font-medium space-y-1">
                 <p>&bull; <strong>Tuntas:</strong> Nilai TP &ge; 75 (Mencapai target ketuntasan, diberikan program Pengayaan)</p>

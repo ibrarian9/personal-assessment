@@ -14,7 +14,7 @@
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
-            Buka Matriks Penilaian per-TP
+            Buka Matriks Penilaian per TP
         </a>
     </div>
 </div>
@@ -130,9 +130,8 @@
                 <h3 class="text-base font-bold text-slate-900">Rekap Capaian Siswa & Ketercapaian TP</h3>
                 <p class="text-xs text-slate-500">Daftar siswa beserta rata-rata capaian sumatif dan status TP</p>
             </div>
-            <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 hover:text-teal-700">
-                <span>Lihat Matriks Lengkap</span>
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center text-xs font-semibold text-teal-600 hover:text-teal-700">
+                Lihat Matriks Lengkap
             </a>
         </div>
         
@@ -158,7 +157,7 @@
                             <td class="py-3 px-4 font-mono text-xs font-bold text-slate-700">{{ $s->nisn }}</td>
                             <td class="py-3 px-4 text-center">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800">
-                                    {{ $s->gaya_belajar }}
+                                    {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $s->gaya_belajar) }}
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-center font-mono font-extrabold text-teal-700">
@@ -166,13 +165,12 @@
                             </td>
                             <td class="py-3 px-4 text-center">
                                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $s->jumlah_tp_belum_tuntas == 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                                    {{ $s->jumlah_tp_tuntas }} Tuntas / {{ $s->jumlah_tp_belum_tuntas }} Remedial
+                                    {{ $s->jumlah_tp_tuntas }} Tuntas, {{ $s->jumlah_tp_belum_tuntas }} Remedial
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-center">
-                                <a href="{{ route('personalisasi.show', $s->id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
-                                    <span>Profil AI</span>
-                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                                <a href="{{ route('personalisasi.show', $s->id) }}" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                                    Profil AI
                                 </a>
                             </td>
                         </tr>
@@ -211,13 +209,12 @@
                         </span>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">
-                        {{ $ar->rekomendasi_materi ?? 'Perlu bimbingan dan tes formatif ulang untuk butir TP terkait.' }}
+                        {{ str_replace(['Baca/Tulis', '/TP', 'per/TP', 'per-TP', ' / ', '/'], ['Baca dan Tulis', ' TP', 'per TP', 'per TP', ' atau ', ' atau '], $ar->rekomendasi_materi ?? 'Perlu bimbingan dan tes formatif ulang untuk butir TP terkait.') }}
                     </p>
                     <div class="pt-1 flex items-center justify-between text-xs">
-                        <span class="text-slate-400">Modalitas: <strong>{{ $ar->siswa->gaya_belajar ?? 'Visual' }}</strong></span>
-                        <a href="{{ route('personalisasi.show', $ar->siswa_id) }}" class="inline-flex items-center gap-1 font-semibold text-teal-700 hover:text-teal-800">
-                            <span>Rencana Remedial</span>
-                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                        <span class="text-slate-400">Modalitas: <strong>{{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $ar->siswa->gaya_belajar ?? 'Visual') }}</strong></span>
+                        <a href="{{ route('personalisasi.show', $ar->siswa_id) }}" class="inline-flex items-center font-semibold text-teal-700 hover:text-teal-800">
+                            Rencana Remedial
                         </a>
                     </div>
                 </div>
@@ -267,7 +264,7 @@
             new Chart(ctxVark, {
                 type: 'bar',
                 data: {
-                    labels: ['Visual', 'Auditori', 'Kinestetik', 'Baca/Tulis'],
+                    labels: ['Visual', 'Auditori', 'Kinestetik', 'Baca dan Tulis'],
                     datasets: [{
                         label: 'Jumlah Siswa',
                         data: [

@@ -10,9 +10,8 @@
         <p class="text-sm text-slate-500 mt-1">Registrasi identitas siswa SMA, kelas, dan asesmen diagnostik awal gaya belajar VARK</p>
     </div>
     <div>
-        <a href="{{ route('siswa.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-            <span>Kembali</span>
+        <a href="{{ route('siswa.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
+            Kembali
         </a>
     </div>
 </div>
@@ -46,7 +45,7 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="email">Email Siswa / Wali</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="email">Email Siswa atau Wali</label>
                 <input type="email" name="email" id="email" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 bg-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all" value="{{ old('email') }}" placeholder="siswa@sman1merdeka.sch.id">
             </div>
         </div>
@@ -58,7 +57,7 @@
                     <option value="Visual" {{ old('gaya_belajar', 'Visual') == 'Visual' ? 'selected' : '' }}>Visual (Grafis, Diagram, Animasi)</option>
                     <option value="Auditori" {{ old('gaya_belajar') == 'Auditori' ? 'selected' : '' }}>Auditori (Diskusi, Penjelasan Suara)</option>
                     <option value="Kinestetik" {{ old('gaya_belajar') == 'Kinestetik' ? 'selected' : '' }}>Kinestetik (Praktikum, Eksperimen Nyata)</option>
-                    <option value="Baca/Tulis" {{ old('gaya_belajar') == 'Baca/Tulis' ? 'selected' : '' }}>Baca/Tulis (Teks, Literatur, Modul)</option>
+                    <option value="Baca/Tulis" {{ old('gaya_belajar') == 'Baca/Tulis' ? 'selected' : '' }}>Baca dan Tulis (Teks, Literatur, Modul)</option>
                 </select>
             </div>
             <div>

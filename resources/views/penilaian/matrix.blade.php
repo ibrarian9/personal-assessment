@@ -24,9 +24,8 @@
                 <span>Import File Excel</span>
             </button>
         @endif
-        <a href="{{ route('penilaian.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-            <span>Ringkasan</span>
+        <a href="{{ route('penilaian.index') }}" class="inline-flex items-center px-3.5 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
+            Ringkasan
         </a>
     </div>
 </div>
@@ -154,7 +153,7 @@
                                 <a href="{{ route('personalisasi.show', $siswa) }}" class="hover:text-teal-600 hover:underline block leading-tight truncate max-w-[160px]" title="{{ $siswa->nama }}">
                                     {{ $siswa->nama }}
                                 </a>
-                                <span class="text-[10px] font-normal text-purple-700 block">{{ $siswa->gaya_belajar }}</span>
+                                <span class="text-[10px] font-normal text-purple-700 block">{{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $siswa->gaya_belajar) }}</span>
                             </td>
                             <!-- Sticky Col 4: NISN (Solid Opaque Background) -->
                             <td class="border border-slate-300 px-2.5 py-1.5 font-mono text-[11px] text-slate-700 sticky left-[250px] bg-white group-hover:bg-slate-100 z-20 w-28 min-w-[100px] max-w-[110px] whitespace-nowrap">
@@ -211,7 +210,7 @@
                             <!-- Ketuntasan Row Live -->
                             <td class="border border-slate-300 px-2 py-1.5 text-center bg-slate-50 min-w-[100px]">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold row-status {{ $isAllTuntas ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                                    {{ $rowTuntas }} / {{ $rowCount }} Tuntas
+                                    {{ $rowTuntas }} Tuntas dari {{ $rowCount }}
                                 </span>
                             </td>
                         </tr>
@@ -303,7 +302,7 @@
                         <option value="Visual">Visual</option>
                         <option value="Auditori">Auditori</option>
                         <option value="Kinestetik">Kinestetik</option>
-                        <option value="Baca/Tulis">Baca/Tulis</option>
+                        <option value="Baca/Tulis">Baca dan Tulis</option>
                     </select>
                 </div>
 
@@ -327,7 +326,7 @@
                 <div class="flex-1 space-y-1">
                     <h3 class="modal__title text-base font-bold text-slate-900" id="reset-nilai-modal-title">Konfirmasi Reset Nilai Sumatif TP</h3>
                     <p class="text-xs text-slate-500 leading-relaxed" id="reset-nilai-desc">
-                        Apakah Anda yakin ingin mereset/menghapus seluruh nilai TP untuk siswa terpilih pada mata pelajaran ini? Personalisasi AI akan disinkronkan ulang.
+                        Apakah Anda yakin ingin mereset atau menghapus seluruh nilai TP untuk siswa terpilih pada mata pelajaran ini? Personalisasi AI akan disinkronkan ulang.
                     </p>
                 </div>
             </div>
@@ -414,7 +413,7 @@
                     const avg = (total / count).toFixed(1);
                     if (avgCell) avgCell.textContent = avg;
                     if (statusBadge) {
-                        statusBadge.textContent = `${tuntas} / ${count} Tuntas`;
+                        statusBadge.textContent = `${tuntas} Tuntas dari ${count}`;
                         if (tuntas === count) {
                             statusBadge.className = 'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold row-status bg-emerald-100 text-emerald-800';
                         } else {

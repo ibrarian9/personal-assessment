@@ -7,17 +7,15 @@
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/80">
     <div>
         <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Detail Capaian Siswa</h2>
-        <p class="text-sm text-slate-500 mt-1">Profil komprehensif, riwayat capaian per-TP, dan diagnostik personalisasi <strong>{{ $siswa->nama }}</strong></p>
+        <p class="text-sm text-slate-500 mt-1">Profil komprehensif, riwayat capaian per TP, dan diagnostik personalisasi <strong>{{ $siswa->nama }}</strong></p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('personalisasi.show', $siswa) }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-colors shadow-xs">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" /></svg>
             <span>Profil Personalisasi AI</span>
-            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
-        <a href="{{ route('siswa.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
-            <span>Kembali</span>
+        <a href="{{ route('siswa.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-xs">
+            Kembali
         </a>
     </div>
 </div>
@@ -50,7 +48,7 @@
                     <td class="py-2.5 px-1 font-semibold text-slate-400">Gaya Belajar (VARK)</td>
                     <td class="py-2.5 px-1">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-purple-100 text-purple-800">
-                            {{ $siswa->gaya_belajar }}
+                            {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $siswa->gaya_belajar) }}
                         </span>
                     </td>
                 </tr>
@@ -94,13 +92,13 @@
         @php $pers = $siswa->personalisasis->first(); @endphp
         <div class="rounded-xl border-l-4 border-teal-600 bg-white/95 p-4 text-xs text-slate-700 shadow-2xs space-y-1.5">
             <div class="flex items-center justify-between">
-                <h4 class="font-bold text-teal-900">Catatan Diagnostik Guru / AI:</h4>
+                <h4 class="font-bold text-teal-900">Catatan Diagnostik Guru dan AI:</h4>
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold {{ ($pers->kategori_pemahaman ?? '') === 'Tinggi' ? 'bg-emerald-100 text-emerald-800' : (($pers->kategori_pemahaman ?? '') === 'Sedang' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800') }}">
                     Kategori: {{ $pers->kategori_pemahaman ?? 'Sedang' }}
                 </span>
             </div>
             <p class="text-slate-600 leading-relaxed">
-                {{ $pers->catatan_guru ?? 'Analisis performa dihasilkan secara otomatis berdasarkan ketercapaian Tujuan Pembelajaran dan modalitas gaya belajar.' }}
+                {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' atau '], $pers->catatan_guru ?? 'Analisis performa dihasilkan secara otomatis berdasarkan ketercapaian Tujuan Pembelajaran dan modalitas gaya belajar.') }}
             </p>
         </div>
     </div>
@@ -113,8 +111,8 @@
             <h3 class="text-base font-bold text-slate-900">Daftar Nilai per Tujuan Pembelajaran (TP)</h3>
             <p class="text-xs text-slate-500">Rincian nilai sumatif per butir indikator Tujuan Pembelajaran</p>
         </div>
-        <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-xs">
-            Edit di Matriks Nilai &rarr;
+        <a href="{{ route('penilaian.matrix') }}" class="inline-flex items-center px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-xs">
+            Edit di Matriks Nilai
         </a>
     </div>
 
@@ -125,7 +123,7 @@
                     <th class="py-3.5 px-4 w-36">Lingkup Materi</th>
                     <th class="py-3.5 px-4 w-28">Kode TP</th>
                     <th class="py-3.5 px-4">Deskripsi Tujuan Pembelajaran</th>
-                    <th class="py-3.5 px-4 text-center w-28">Target / KKM</th>
+                    <th class="py-3.5 px-4 text-center w-28">Target KKM</th>
                     <th class="py-3.5 px-4 text-center w-28">Nilai Sumatif</th>
                     <th class="py-3.5 px-4 text-center w-36">Status Ketuntasan</th>
                 </tr>
@@ -140,8 +138,23 @@
                         <td class="py-3.5 px-4 font-mono font-bold text-teal-800">
                             {{ $nst->tujuanPembelajaran->kode_tp ?? '-' }}
                         </td>
-                        <td class="py-3.5 px-4 text-xs text-slate-700 leading-relaxed">
-                            {{ $nst->tujuanPembelajaran->deskripsi_tp ?? '-' }}
+                        <td class="py-3.5 px-4 text-xs leading-relaxed space-y-1.5">
+                            <div class="text-slate-800 font-medium leading-relaxed">
+                                {{ $nst->tujuanPembelajaran->deskripsi_tp ?? '-' }}
+                            </div>
+                            @if($nst->catatan)
+                                @php
+                                    $catatanLines = array_filter(array_map('trim', explode("\n", $nst->catatan)));
+                                @endphp
+                                <div class="p-2.5 rounded-lg border {{ $nst->status_ketuntasan === 'Tuntas' ? 'bg-emerald-50/60 border-emerald-200/70 text-emerald-950' : 'bg-rose-50/70 border-rose-200 text-rose-950' }} text-[11px] leading-relaxed space-y-1">
+                                    <span class="font-bold block {{ $nst->status_ketuntasan === 'Tuntas' ? 'text-emerald-800' : 'text-rose-800' }}">3 Rekomendasi Tindak Lanjut:</span>
+                                    <div class="space-y-1 text-slate-700 font-normal">
+                                        @foreach($catatanLines as $line)
+                                            <p>{{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' atau '], $line) }}</p>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         </td>
                         <td class="py-3.5 px-4 text-center font-mono text-slate-500">
                             {{ $nst->tujuanPembelajaran->target_ketercapaian ?? 75 }}

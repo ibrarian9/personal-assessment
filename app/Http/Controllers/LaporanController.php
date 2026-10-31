@@ -92,7 +92,7 @@ class LaporanController extends Controller
         }
 
         $namaSekolah = Setting::get('nama_institusi', 'SMA Negeri 1 Merdeka');
-        $tahunAjaran = Setting::get('tahun_akademik', '2025/2026 Ganjil');
+        $tahunAjaran = str_replace('/', '-', Setting::get('tahun_akademik', '2025-2026 Ganjil'));
         $kepalaSekolah = Setting::get('kepala_sekolah', 'Dr. H. Bambang Sutrisno, M.Pd.');
         $nipKepalaSekolah = Setting::get('nip_kepala_sekolah', '196805121994031005');
 

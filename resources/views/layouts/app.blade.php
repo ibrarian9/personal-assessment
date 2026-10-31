@@ -33,8 +33,8 @@
                     <p class="text-[11px] text-teal-400 font-medium">SMA Assessment Engine</p>
                 </div>
             </a>
-            <button id="close-sidebar-btn" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button id="close-sidebar-btn" type="button" aria-label="Tutup menu navigasi" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                <svg class="h-5 w-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
 
@@ -78,7 +78,7 @@
                 <svg class="h-5 w-5 {{ request()->routeIs('penilaian.matrix') ? 'text-white' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                <span class="flex-1">Matriks Nilai per-TP</span>
+                <span class="flex-1">Matriks Nilai per TP</span>
                 <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {{ request()->routeIs('penilaian.matrix') ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400' }}">Grid</span>
             </a>
 
@@ -134,8 +134,8 @@
         <!-- Top Navbar -->
         <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between shadow-2xs">
             <div class="flex items-center gap-3">
-                <button id="open-sidebar-btn" class="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <button id="open-sidebar-btn" type="button" aria-label="Buka menu navigasi" class="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
+                    <svg class="h-6 w-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
@@ -143,7 +143,7 @@
                     </span>
                     <span class="text-xs text-slate-400 hidden sm:inline">&bull;</span>
                     <span class="text-xs text-slate-500 font-medium hidden sm:inline">
-                        {{ \App\Models\Setting::get('tahun_akademik', '2025/2026 Ganjil') }}
+                        {{ str_replace('/', '-', \App\Models\Setting::get('tahun_akademik', '2025-2026 Ganjil')) }}
                     </span>
                 </div>
             </div>

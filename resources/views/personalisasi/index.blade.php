@@ -32,7 +32,7 @@
                 </svg>
             </div>
         </div>
-        <p class="mt-3 text-xs text-emerald-700 font-medium">Siap untuk tugas pengayaan / Tutor Sebaya</p>
+        <p class="mt-3 text-xs text-emerald-700 font-medium">Siap untuk tugas pengayaan dan tutor sebaya</p>
     </div>
 
     <div class="rounded-2xl bg-white p-6 shadow-xs border border-slate-200/80">
@@ -70,7 +70,7 @@
 <x-card>
     <!-- Filter & Search Bar -->
     <form method="GET" action="{{ route('personalisasi.index') }}" class="flex flex-wrap items-center gap-3">
-        <x-search-input name="search" placeholder="Cari nama / NISN..." :value="$search" />
+        <x-search-input name="search" placeholder="Cari nama atau NISN..." :value="$search" />
 
         <x-filter-select name="kategori">
             <option value="">Semua Kategori Pemahaman</option>
@@ -84,7 +84,7 @@
             <option value="Visual" {{ $gayaBelajar == 'Visual' ? 'selected' : '' }}>Visual</option>
             <option value="Auditori" {{ $gayaBelajar == 'Auditori' ? 'selected' : '' }}>Auditori</option>
             <option value="Kinestetik" {{ $gayaBelajar == 'Kinestetik' ? 'selected' : '' }}>Kinestetik</option>
-            <option value="Baca/Tulis" {{ $gayaBelajar == 'Baca/Tulis' ? 'selected' : '' }}>Baca/Tulis</option>
+            <option value="Baca/Tulis" {{ $gayaBelajar == 'Baca/Tulis' ? 'selected' : '' }}>Baca dan Tulis</option>
         </x-filter-select>
 
         <x-button type="submit" variant="secondary">
@@ -118,7 +118,7 @@
                     </x-td>
                     <x-td align="center">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-800">
-                            {{ $item->gaya_belajar_rekomendasi ?? $item->siswa->gaya_belajar }}
+                            {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $item->gaya_belajar_rekomendasi ?? $item->siswa->gaya_belajar) }}
                         </span>
                     </x-td>
                     <x-td align="center" class="font-mono font-extrabold text-teal-700 text-base">
@@ -126,7 +126,7 @@
                     </x-td>
                     <x-td align="center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $item->tp_belum_tuntas_count == 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                            {{ $item->tp_tuntas_count }} Tuntas / {{ $item->tp_belum_tuntas_count }} Remedial
+                            {{ $item->tp_tuntas_count }} Tuntas, {{ $item->tp_belum_tuntas_count }} Remedial
                         </span>
                     </x-td>
                     <x-td align="center">
@@ -135,12 +135,11 @@
                         </span>
                     </x-td>
                     <x-td class="max-w-xs text-xs text-slate-600 leading-relaxed">
-                        {{ \Illuminate\Support\Str::limit($item->rekomendasi_materi, 90) }}
+                        {{ \Illuminate\Support\Str::limit(str_replace(['Baca/Tulis', '/TP', 'per/TP', 'per-TP', ' / ', '/'], ['Baca dan Tulis', ' TP', 'per TP', 'per TP', ' atau ', ' atau '], $item->rekomendasi_materi), 90) }}
                     </x-td>
                     <x-td align="center">
                         <x-button variant="primary" href="{{ route('personalisasi.show', $item->siswa_id) }}" class="px-3 py-1.5 text-xs">
-                            <span>Diagnostik AI</span>
-                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                            Diagnostik AI
                         </x-button>
                     </x-td>
                 </tr>

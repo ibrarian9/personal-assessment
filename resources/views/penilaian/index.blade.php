@@ -19,7 +19,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
             <span>Buka Input Matriks Grid</span>
-            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </x-button>
     </x-slot:actions>
 </x-page-header>
@@ -85,7 +84,7 @@
                     <x-td class="font-semibold text-slate-900">{{ $s->nama }}</x-td>
                     <x-td align="center">
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800">
-                            {{ $s->gaya_belajar }}
+                            {{ str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $s->gaya_belajar) }}
                         </span>
                     </x-td>
                     <x-td align="center" class="font-mono font-medium">{{ $cnt }} TP</x-td>
@@ -105,8 +104,7 @@
                     <x-td align="center">
                         <div class="inline-flex items-center gap-1.5">
                             <x-button variant="subtle" href="{{ route('personalisasi.show', $s) }}" class="px-2.5 py-1 text-xs">
-                                <span>Diagnostik AI</span>
-                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                                Diagnostik AI
                             </x-button>
                         </div>
                     </x-td>
