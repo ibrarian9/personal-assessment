@@ -110,10 +110,10 @@
                                             </span>
                                             <p class="text-xs text-slate-700 font-semibold">{{ $lm->judul_materi }}</p>
                                             <div class="pt-2">
-                                                <form action="{{ route('lingkup-materi.destroy', $lm) }}" method="POST" class="inline" onsubmit="return confirm('Hapus {{ $lm->kode_lm }} beserta seluruh TP di dalamnya?')">
+                                                <form action="{{ route('lingkup-materi.destroy', $lm) }}" method="POST" class="inline" data-confirm="Hapus {{ $lm->kode_lm }} ({{ $lm->judul_materi }}) beserta seluruh TP di dalamnya?" data-confirm-title="Hapus Lingkup Materi">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-[11px] text-rose-600 hover:underline">Hapus Materi</button>
+                                                    <button type="submit" class="text-[11px] text-rose-600 hover:underline font-semibold">Hapus Materi</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -131,9 +131,9 @@
                                 <td class="py-3.5 px-4 text-center align-top border-l border-slate-200">
                                     <div class="inline-flex items-center gap-1.5">
                                         <x-button variant="outline" href="{{ route('tujuan-pembelajaran.edit', $tp) }}" class="px-2.5 py-1 text-xs">
-                                            Edit
+                                             Edit
                                         </x-button>
-                                        <form action="{{ route('tujuan-pembelajaran.destroy', $tp) }}" method="POST" class="inline" onsubmit="return confirm('Hapus {{ $tp->kode_tp }}?')">
+                                        <form action="{{ route('tujuan-pembelajaran.destroy', $tp) }}" method="POST" class="inline" data-confirm="Hapus tujuan pembelajaran {{ $tp->kode_tp }}?" data-confirm-title="Hapus Tujuan Pembelajaran">
                                             @csrf
                                             @method('DELETE')
                                             <x-button type="submit" variant="danger" class="px-2 py-1 text-xs">

@@ -11,13 +11,13 @@
     </div>
     <div class="flex flex-wrap items-center gap-2.5">
         @if($selectedMapel)
-            <a href="{{ route('penilaian.template-excel', ['mata_pelajaran_id' => $selectedMapel->id, 'kelas' => $selectedKelas]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors shadow-xs">
+            <a href="{{ route('penilaian.template-excel', ['mata_pelajaran_id' => $selectedMapel->id, 'kelas' => $selectedKelas]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl border border-teal-300 bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors shadow-xs">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
                 <span>Download Template Excel</span>
             </a>
-            <button type="button" onclick="document.getElementById('import-excel-modal').classList.remove('hidden')" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-xs">
+            <button type="button" data-micromodal-trigger="import-excel-modal" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-xs">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
@@ -267,102 +267,112 @@
     </button>
 </div>
 
-<!-- Modal Quick Edit Siswa -->
-<div id="quick-edit-siswa-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
-    <div class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-5">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
-                Edit Data Siswa
-            </h3>
-            <button type="button" onclick="closeQuickEditModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
+<!-- Modal Quick Edit Siswa (MicroModal) -->
+<div class="modal micromodal-slide" id="quick-edit-siswa-modal" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200" role="dialog" aria-modal="true" aria-labelledby="quick-edit-siswa-modal-title">
+            <header class="modal__header flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="modal__title text-base font-bold text-slate-900 flex items-center gap-2" id="quick-edit-siswa-modal-title">
+                    <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
+                    Edit Data Siswa
+                </h3>
+                <button type="button" class="modal__close p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100" aria-label="Close modal" data-micromodal-close>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </header>
+
+            <form action="{{ route('penilaian.matrix.quick-update-siswa') }}" method="POST" class="space-y-4 pt-3">
+                @csrf
+                <input type="hidden" name="siswa_id" id="edit_siswa_id">
+                <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
+                <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" name="nama" id="edit_nama" required class="w-full py-2 px-3 text-sm font-semibold rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">NISN (Nomor Induk Siswa Nasional)</label>
+                    <input type="text" name="nisn" id="edit_nisn" required class="w-full py-2 px-3 text-sm font-mono font-semibold rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Gaya Belajar (VARK)</label>
+                    <select name="gaya_belajar" id="edit_gaya_belajar" class="w-full py-2 px-3 text-sm font-semibold rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                        <option value="Visual">Visual</option>
+                        <option value="Auditori">Auditori</option>
+                        <option value="Kinestetik">Kinestetik</option>
+                        <option value="Baca/Tulis">Baca/Tulis</option>
+                    </select>
+                </div>
+
+                <div class="modal__footer flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors" data-micromodal-close>Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-semibold bg-teal-600 hover:bg-teal-700 text-white rounded-xl shadow-xs transition-colors">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
-
-        <form action="{{ route('penilaian.matrix.quick-update-siswa') }}" method="POST" class="space-y-4">
-            @csrf
-            <input type="hidden" name="siswa_id" id="edit_siswa_id">
-            <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
-            <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
-
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama Lengkap Siswa</label>
-                <input type="text" name="nama" id="edit_nama" required class="w-full py-2 px-3 text-sm font-semibold rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">NISN (Nomor Induk Siswa Nasional)</label>
-                <input type="text" name="nisn" id="edit_nisn" required class="w-full py-2 px-3 text-sm font-mono font-semibold rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Gaya Belajar (VARK)</label>
-                <select name="gaya_belajar" id="edit_gaya_belajar" class="w-full py-2 px-3 text-sm font-semibold rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
-                    <option value="Visual">Visual</option>
-                    <option value="Auditori">Auditori</option>
-                    <option value="Kinestetik">Kinestetik</option>
-                    <option value="Baca/Tulis">Baca/Tulis</option>
-                </select>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button type="button" onclick="closeQuickEditModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
-                <button type="submit" class="px-5 py-2 text-sm font-semibold bg-teal-600 hover:bg-teal-700 text-white rounded-xl shadow-xs transition-colors">Simpan Perubahan</button>
-            </div>
-        </form>
     </div>
 </div>
 
-<!-- Modal Konfirmasi Reset Nilai -->
-<div id="reset-nilai-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
-    <div class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-4">
-        <div class="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg>
-        </div>
-        <div>
-            <h3 class="text-base font-bold text-slate-900">Konfirmasi Reset Nilai Sumatif TP</h3>
-            <p class="text-xs text-slate-500 mt-1" id="reset-nilai-desc">
-                Apakah Anda yakin ingin mereset/menghapus seluruh nilai TP untuk siswa terpilih pada mata pelajaran ini? Personalisasi AI akan disinkronkan ulang.
-            </p>
-        </div>
-        <form action="{{ route('penilaian.matrix.reset-scores') }}" method="POST" id="reset-scores-form">
-            @csrf
-            <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
-            <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
-            <div id="reset-student-ids-container"></div>
-            
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button type="button" onclick="closeResetModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
-                <button type="submit" class="px-5 py-2 text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-xs transition-colors">Ya, Reset Nilai</button>
+<!-- Modal Konfirmasi Reset Nilai (MicroModal) -->
+<div class="modal micromodal-slide" id="reset-nilai-modal" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-4" role="dialog" aria-modal="true" aria-labelledby="reset-nilai-modal-title">
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shrink-0">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg>
+                </div>
+                <div class="flex-1 space-y-1">
+                    <h3 class="modal__title text-base font-bold text-slate-900" id="reset-nilai-modal-title">Konfirmasi Reset Nilai Sumatif TP</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed" id="reset-nilai-desc">
+                        Apakah Anda yakin ingin mereset/menghapus seluruh nilai TP untuk siswa terpilih pada mata pelajaran ini? Personalisasi AI akan disinkronkan ulang.
+                    </p>
+                </div>
             </div>
-        </form>
+            <form action="{{ route('penilaian.matrix.reset-scores') }}" method="POST" id="reset-scores-form">
+                @csrf
+                <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
+                <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
+                <div id="reset-student-ids-container"></div>
+                
+                <div class="modal__footer flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors" data-micromodal-close>Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-xs transition-colors">Ya, Reset Nilai</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus Siswa -->
-<div id="delete-siswa-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
-    <div class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-4">
-        <div class="h-12 w-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-        </div>
-        <div>
-            <h3 class="text-base font-bold text-slate-900">Konfirmasi Hapus Data Siswa</h3>
-            <p class="text-xs text-slate-500 mt-1" id="delete-siswa-desc">
-                Apakah Anda yakin ingin menghapus data siswa terpilih? Seluruh nilai dan riwayat personalisasi siswa tersebut akan dihapus dari sistem.
-            </p>
-        </div>
-        <form action="{{ route('penilaian.matrix.bulk-delete-siswa') }}" method="POST" id="delete-siswa-form">
-            @csrf
-            <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
-            <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
-            <div id="delete-student-ids-container"></div>
-            
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
-                <button type="submit" class="px-5 py-2 text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-xs transition-colors">Ya, Hapus Data Siswa</button>
+<!-- Modal Konfirmasi Hapus Siswa (MicroModal) -->
+<div class="modal micromodal-slide" id="delete-siswa-modal" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-4" role="dialog" aria-modal="true" aria-labelledby="delete-siswa-modal-title">
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100 shrink-0">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                </div>
+                <div class="flex-1 space-y-1">
+                    <h3 class="modal__title text-base font-bold text-slate-900" id="delete-siswa-modal-title">Konfirmasi Hapus Data Siswa</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed" id="delete-siswa-desc">
+                        Apakah Anda yakin ingin menghapus data siswa terpilih? Seluruh nilai dan riwayat personalisasi siswa tersebut akan dihapus dari sistem.
+                    </p>
+                </div>
             </div>
-        </form>
+            <form action="{{ route('penilaian.matrix.bulk-delete-siswa') }}" method="POST" id="delete-siswa-form">
+                @csrf
+                <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
+                <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
+                <div id="delete-student-ids-container"></div>
+                
+                <div class="modal__footer flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors" data-micromodal-close>Batal</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-xs transition-colors">Ya, Hapus Data Siswa</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -463,25 +473,25 @@
             updateBulkBar();
         };
 
-        // 3. Quick Edit Siswa Modal
+        // 3. Quick Edit Siswa Modal with MicroModal
         window.openQuickEditModal = function (id, nama, nisn, gaya) {
             document.getElementById('edit_siswa_id').value = id;
             document.getElementById('edit_nama').value = nama;
             document.getElementById('edit_nisn').value = nisn;
             document.getElementById('edit_gaya_belajar').value = gaya;
-            document.getElementById('quick-edit-siswa-modal').classList.remove('hidden');
+            if (window.openModal) window.openModal('quick-edit-siswa-modal');
         };
 
         window.closeQuickEditModal = function () {
-            document.getElementById('quick-edit-siswa-modal').classList.add('hidden');
+            if (window.closeModal) window.closeModal('quick-edit-siswa-modal');
         };
 
-        // 4. Reset Nilai Modal (Single & Bulk)
+        // 4. Reset Nilai Modal (Single & Bulk) with MicroModal
         window.openResetSingleModal = function (id, nama) {
             const container = document.getElementById('reset-student-ids-container');
             container.innerHTML = `<input type="hidden" name="siswa_ids[]" value="${id}">`;
             document.getElementById('reset-nilai-desc').textContent = `Apakah Anda yakin ingin mereset seluruh nilai TP mata pelajaran ini untuk ${nama}?`;
-            document.getElementById('reset-nilai-modal').classList.remove('hidden');
+            if (window.openModal) window.openModal('reset-nilai-modal');
         };
 
         window.openBulkResetModal = function () {
@@ -499,19 +509,19 @@
             });
 
             document.getElementById('reset-nilai-desc').textContent = `Apakah Anda yakin ingin mereset seluruh nilai TP mata pelajaran ini untuk ${selected.length} siswa terpilih?`;
-            document.getElementById('reset-nilai-modal').classList.remove('hidden');
+            if (window.openModal) window.openModal('reset-nilai-modal');
         };
 
         window.closeResetModal = function () {
-            document.getElementById('reset-nilai-modal').classList.add('hidden');
+            if (window.closeModal) window.closeModal('reset-nilai-modal');
         };
 
-        // 5. Delete Siswa Modal (Single & Bulk)
+        // 5. Delete Siswa Modal (Single & Bulk) with MicroModal
         window.openDeleteSingleModal = function (id, nama) {
             const container = document.getElementById('delete-student-ids-container');
             container.innerHTML = `<input type="hidden" name="siswa_ids[]" value="${id}">`;
             document.getElementById('delete-siswa-desc').textContent = `Apakah Anda yakin ingin menghapus data siswa ${nama} dari kelas ini? Seluruh riwayat nilai dan personalisasi akan dihapus.`;
-            document.getElementById('delete-siswa-modal').classList.remove('hidden');
+            if (window.openModal) window.openModal('delete-siswa-modal');
         };
 
         window.openBulkDeleteModal = function () {
@@ -529,83 +539,85 @@
             });
 
             document.getElementById('delete-siswa-desc').textContent = `Apakah Anda yakin ingin menghapus ${selected.length} data siswa terpilih dari kelas ini?`;
-            document.getElementById('delete-siswa-modal').classList.remove('hidden');
+            if (window.openModal) window.openModal('delete-siswa-modal');
         };
 
         window.closeDeleteModal = function () {
-            document.getElementById('delete-siswa-modal').classList.add('hidden');
+            if (window.closeModal) window.closeModal('delete-siswa-modal');
         };
     });
 </script>
 
-<!-- Import Excel Modal -->
-<div id="import-excel-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden transition-opacity">
-    <div class="relative w-full max-w-xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200/80 space-y-6">
-        <!-- Modal Header -->
-        <div class="flex items-start justify-between pb-4 border-b border-slate-100">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                    <span class="p-2 rounded-xl bg-teal-50 text-teal-600">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+<!-- Import Excel Modal (MicroModal) -->
+<div class="modal micromodal-slide" id="import-excel-modal" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container max-w-xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200/80 space-y-6" role="dialog" aria-modal="true" aria-labelledby="import-excel-modal-title">
+            <!-- Modal Header -->
+            <header class="modal__header flex items-start justify-between pb-4 border-b border-slate-100">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="p-2 rounded-xl bg-teal-50 text-teal-600">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                        </span>
+                        <h3 class="modal__title text-lg font-bold text-slate-900" id="import-excel-modal-title">Upload File Excel Nilai Sumatif</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Mata Pelajaran: <strong>{{ $selectedMapel->nama_mapel }}</strong> &bull; Kelas: <strong>{{ $selectedKelas }}</strong></p>
+                </div>
+                <button type="button" class="modal__close p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" aria-label="Close modal" data-micromodal-close>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </header>
+
+            <!-- Structure Guidance Box -->
+            <div class="rounded-2xl bg-teal-50/70 p-4 border border-teal-100 text-xs text-teal-900 space-y-2">
+                <div class="font-bold flex items-center gap-1.5 text-teal-800">
+                    <svg class="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
+                    Struktur Format Excel yang Didukung:
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                    <li><strong>Baris 1 (Header Atas):</strong> Nama Lingkup Materi (misal: <em>Materi 1: Struktur Sel</em>, <em>Materi 2: Jaringan</em>).</li>
+                    <li><strong>Baris 2 (Header Bawah):</strong> Kolom <code>NO</code>, <code>NAMA SISWA</code>, <code>NISN</code>, lalu kode masing-masing TP (<code>TP 1.1</code>, <code>TP 1.2</code>, <code>TP 2.1</code>, dst.).</li>
+                    <li><strong>Baris 3+:</strong> Data siswa beserta skor nilai numerik (rentang 0 - 100).</li>
+                </ul>
+                <div class="pt-1">
+                    <a href="{{ route('penilaian.template-excel', ['mata_pelajaran_id' => $selectedMapel->id, 'kelas' => $selectedKelas]) }}" class="inline-flex items-center gap-1 font-semibold text-teal-700 hover:text-teal-800 underline">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                        <span>Download format template Excel siap pakai di sini</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <form action="{{ route('penilaian.import-excel') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                @csrf
+                <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
+                <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                    <div class="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer" onclick="document.getElementById('file_excel_input').click()">
+                        <svg class="h-10 w-10 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
-                    </span>
-                    <h3 class="text-lg font-bold text-slate-900">Upload File Excel Nilai Sumatif</h3>
+                        <p class="text-sm font-semibold text-slate-700 text-center" id="file-name-display">Klik untuk memilih file Excel atau seret file ke sini</p>
+                        <p class="text-xs text-slate-400 mt-1">Maksimal ukuran file: 10 MB</p>
+                        <input type="file" name="file_excel" id="file_excel_input" accept=".xlsx,.xls,.csv" class="hidden" required onchange="document.getElementById('file-name-display').textContent = this.files[0] ? this.files[0].name : 'Klik untuk memilih file Excel'">
+                    </div>
                 </div>
-                <p class="text-xs text-slate-500">Mata Pelajaran: <strong>{{ $selectedMapel->nama_mapel }}</strong> &bull; Kelas: <strong>{{ $selectedKelas }}</strong></p>
-            </div>
-            <button type="button" onclick="document.getElementById('import-excel-modal').classList.add('hidden')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
 
-        <!-- Structure Guidance Box -->
-        <div class="rounded-2xl bg-teal-50/70 p-4 border border-teal-100 text-xs text-teal-900 space-y-2">
-            <div class="font-bold flex items-center gap-1.5 text-teal-800">
-                <svg class="h-4 w-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
-                Struktur Format Excel yang Didukung:
-            </div>
-            <ul class="list-disc list-inside space-y-1 text-slate-700">
-                <li><strong>Baris 1 (Header Atas):</strong> Nama Lingkup Materi (misal: <em>Materi 1: Struktur Sel</em>, <em>Materi 2: Jaringan</em>).</li>
-                <li><strong>Baris 2 (Header Bawah):</strong> Kolom <code>NO</code>, <code>NAMA SISWA</code>, <code>NISN</code>, lalu kode masing-masing TP (<code>TP 1.1</code>, <code>TP 1.2</code>, <code>TP 2.1</code>, dst.).</li>
-                <li><strong>Baris 3+:</strong> Data siswa beserta skor nilai numerik (rentang 0 - 100).</li>
-            </ul>
-            <div class="pt-1">
-                <a href="{{ route('penilaian.template-excel', ['mata_pelajaran_id' => $selectedMapel->id, 'kelas' => $selectedKelas]) }}" class="inline-flex items-center gap-1 font-semibold text-teal-700 hover:text-teal-800 underline">
-                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                    <span>Download format template Excel siap pakai di sini</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Upload Form -->
-        <form action="{{ route('penilaian.import-excel') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
-            @csrf
-            <input type="hidden" name="mata_pelajaran_id" value="{{ $selectedMapel->id }}">
-            <input type="hidden" name="kelas" value="{{ $selectedKelas }}">
-
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih File Excel (.xlsx, .xls, .csv)</label>
-                <div class="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer" onclick="document.getElementById('file_excel_input').click()">
-                    <svg class="h-10 w-10 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <p class="text-sm font-semibold text-slate-700 text-center" id="file-name-display">Klik untuk memilih file Excel atau seret file ke sini</p>
-                    <p class="text-xs text-slate-400 mt-1">Maksimal ukuran file: 10 MB</p>
-                    <input type="file" name="file_excel" id="file_excel_input" accept=".xlsx,.xls,.csv" class="hidden" required onchange="document.getElementById('file-name-display').textContent = this.files[0] ? this.files[0].name : 'Klik untuk memilih file Excel'">
+                <div class="modal__footer flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors" data-micromodal-close>
+                        Batal
+                    </button>
+                    <button type="submit" class="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-xl bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-sm">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                        <span>Upload & Sinkronkan Nilai</span>
+                    </button>
                 </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-                <button type="button" onclick="document.getElementById('import-excel-modal').classList.add('hidden')" class="px-4 py-2 text-sm font-semibold rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-colors">
-                    Batal
-                </button>
-                <button type="submit" class="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-xl bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-sm">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
-                    <span>Upload & Sinkronkan Nilai</span>
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 @else

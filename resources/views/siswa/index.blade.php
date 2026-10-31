@@ -103,7 +103,7 @@
                             <x-button variant="outline" href="{{ route('siswa.edit', $s) }}" class="px-2.5 py-1 text-xs">
                                 Edit
                             </x-button>
-                            <form action="{{ route('siswa.destroy', $s) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data siswa {{ $s->nama }}?')">
+                            <form action="{{ route('siswa.destroy', $s) }}" method="POST" class="inline" data-confirm="Apakah Anda yakin ingin menghapus data siswa {{ $s->nama }} (NISN: {{ $s->nisn }})?" data-confirm-title="Hapus Data Siswa">
                                 @csrf
                                 @method('DELETE')
                                 <x-button type="submit" variant="danger" class="px-2 py-1 text-xs">

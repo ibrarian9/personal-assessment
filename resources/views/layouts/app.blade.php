@@ -199,5 +199,78 @@
         </main>
     </div>
 
+    <!-- Global MicroModal Alert Modal -->
+    <div class="modal micromodal-slide" id="global-alert-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200" role="dialog" aria-modal="true" aria-labelledby="global-alert-modal-title">
+                <div class="flex items-start gap-4">
+                    <div id="global-alert-modal-icon" class="h-12 w-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center border border-teal-100 shrink-0">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="flex-1 space-y-1">
+                        <h3 class="modal__title text-lg font-bold text-slate-900" id="global-alert-modal-title">Pemberitahuan Sistem</h3>
+                        <div class="modal__content text-sm text-slate-600 leading-relaxed" id="global-alert-modal-desc">
+                            Operasi berhasil dijalankan.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal__footer flex justify-end pt-4 border-t border-slate-100 mt-4">
+                    <button type="button" class="px-5 py-2 text-sm font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors" data-micromodal-close>
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global MicroModal Confirm Modal -->
+    <div class="modal micromodal-slide" id="global-confirm-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200" role="dialog" aria-modal="true" aria-labelledby="global-confirm-modal-title">
+                <div class="flex items-start gap-4">
+                    <div id="global-confirm-modal-icon" class="h-12 w-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100 shrink-0">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                    </div>
+                    <div class="flex-1 space-y-1">
+                        <h3 class="modal__title text-lg font-bold text-slate-900" id="global-confirm-modal-title">Konfirmasi Aksi</h3>
+                        <div class="modal__content text-sm text-slate-600 leading-relaxed" id="global-confirm-modal-desc">
+                            Apakah Anda yakin ingin melanjutkan tindakan ini?
+                        </div>
+                    </div>
+                </div>
+                <div class="modal__footer flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 mt-4">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold rounded-xl text-slate-600 hover:bg-slate-100 transition-colors" data-micromodal-close>
+                        Batal
+                    </button>
+                    <button type="button" id="global-confirm-modal-btn" class="px-5 py-2 text-sm font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition-colors">
+                        Konfirmasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to Auto-Trigger MicroModal for Server Flash Messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if(session('success'))
+                if (typeof window.showAlertModal === 'function') {
+                    window.showAlertModal('Berhasil!', `{!! addslashes(session('success')) !!}`, 'success');
+                }
+            @elseif(session('error'))
+                if (typeof window.showAlertModal === 'function') {
+                    window.showAlertModal('Terjadi Kesalahan', `{!! addslashes(session('error')) !!}`, 'error');
+                }
+            @elseif((isset($errors) && $errors->any()) || (session('errors') && session('errors')->any()))
+                @php
+                    $activeErrors = (isset($errors) && $errors->any()) ? $errors : session('errors');
+                @endphp
+                if (typeof window.showAlertModal === 'function') {
+                    const errorMsg = `<ul class="list-disc list-inside space-y-1 text-xs text-rose-700">@foreach($activeErrors->all() as $err)<li>{{ addslashes($err) }}</li>@endforeach</ul>`;
+                    window.showAlertModal('Validasi Gagal', errorMsg, 'error');
+                }
+            @endif
+        });
+    </script>
 </body>
 </html>

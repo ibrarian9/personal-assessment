@@ -81,7 +81,7 @@
                             <x-button variant="outline" href="{{ route('matapelajaran.edit', $mk) }}" class="px-2.5 py-1 text-xs">
                                 Edit
                             </x-button>
-                            <form action="{{ route('matapelajaran.destroy', $mk) }}" method="POST" class="inline" onsubmit="return confirm('Hapus mata pelajaran {{ $mk->nama_mapel }}?')">
+                            <form action="{{ route('matapelajaran.destroy', $mk) }}" method="POST" class="inline" data-confirm="Apakah Anda yakin ingin menghapus mata pelajaran {{ $mk->nama_mapel }} beserta seluruh lingkup materi dan TP di dalamnya?" data-confirm-title="Hapus Mata Pelajaran">
                                 @csrf
                                 @method('DELETE')
                                 <x-button type="submit" variant="danger" class="px-2 py-1 text-xs">
