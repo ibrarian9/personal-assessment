@@ -68,4 +68,5 @@ Route::prefix('laporan')->name('laporan.')->group(function () {
 Route::prefix('setting')->name('setting.')->group(function () {
     Route::get('/', [SettingController::class, 'index'])->name('index');
     Route::post('/', [SettingController::class, 'update'])->name('update');
+    Route::post('/test-connection', [SettingController::class, 'testConnection'])->name('test-connection');
 });

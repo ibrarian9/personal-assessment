@@ -6,6 +6,7 @@ use App\Models\Personalisasi;
 use App\Models\Siswa;
 use App\Services\AiPersonalizationService;
 use App\Services\PersonalizationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -105,31 +106,52 @@ class PersonalisasiController extends Controller
     /**
      * Jalankan analisis AI khusus untuk seorang siswa SMA
      */
-    public function aiAnalyze(Siswa $siswa): RedirectResponse
+    public function aiAnalyze(Siswa $siswa): JsonResponse|RedirectResponse
     {
         $personalisasi = $this->aiService->generateForSiswa($siswa);
         $source = $this->aiService->getLastSource();
         $reason = $this->aiService->getLastReason();
 
-        if ($source === 'Gemini') {
-            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh Google Gemini (gemini-3.5-flash) dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+        if ($source === 'Router9') {
+            $model = $this->aiService->getLastModel() ?? 'ag/gemini-2.5-flash';
+            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat via Router9: {$model} dan disimpan ke database dengan Skor {$personalisasi->skor_performa}, Kategori {$personalisasi->kategori_pemahaman}.";
+        } elseif ($source === 'Gemini') {
+            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh Google Gemini: gemini-3.5-flash dan disimpan ke database dengan Skor {$personalisasi->skor_performa}, Kategori {$personalisasi->kategori_pemahaman}.";
         } elseif ($source === 'OpenAI') {
-            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh OpenAI (gpt-4o-mini) dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+            $msg = "Analisis Diagnostik AI untuk {$siswa->nama} berhasil dibuat langsung oleh OpenAI: gpt-4o-mini dan disimpan ke database dengan Skor {$personalisasi->skor_performa}, Kategori {$personalisasi->kategori_pemahaman}.";
         } else {
-            $keterangan = $reason ? " ({$reason})" : '';
-            $msg = "Analisis Diagnostik untuk {$siswa->nama} diproses menggunakan Fallback Heuristik Kurikulum Merdeka{$keterangan} dan disimpan ke database (Skor: {$personalisasi->skor_performa}, Kategori: {$personalisasi->kategori_pemahaman}).";
+            $keterangan = $reason ? " - {$reason}" : '';
+            $msg = "Analisis Diagnostik untuk {$siswa->nama} diproses menggunakan Fallback Heuristik Kurikulum Merdeka{$keterangan} dan disimpan ke database dengan Skor {$personalisasi->skor_performa}, Kategori {$personalisasi->kategori_pemahaman}.";
+        }
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $msg,
+                'redirect' => route('personalisasi.show', $siswa),
+            ]);
         }
 
         return redirect()->route('personalisasi.show', $siswa)
             ->with('success', $msg);
     }
 
-    public function generate(): RedirectResponse
+    public function generate(): JsonResponse|RedirectResponse
     {
         $count = $this->aiService->generateAll();
         $source = $this->aiService->getLastSource();
+        $msg = "Engine Personalisasi AI Kurikulum Merdeka berhasil menganalisis & menyimpan {$count} siswa SMA ke database: Sumber {$source}.";
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $msg,
+                'redirect' => route('personalisasi.index'),
+            ]);
+        }
+
         return redirect()->route('personalisasi.index')
-            ->with('success', "Engine Personalisasi AI Kurikulum Merdeka berhasil menganalisis & menyimpan {$count} siswa SMA ke database (Sumber: {$source}).");
+            ->with('success', $msg);
     }
 
     public function updateCatatan(Request $request, Siswa $siswa): RedirectResponse

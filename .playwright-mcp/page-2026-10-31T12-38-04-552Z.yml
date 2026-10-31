@@ -1,0 +1,229 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "TP PLA Merdeka SMA Assessment Engine" [ref=e4] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000
+      - generic [ref=e5]: TP
+      - generic [ref=e6]:
+        - heading "PLA Merdeka" [level=1] [ref=e7]
+        - paragraph [ref=e8]: SMA Assessment Engine
+    - navigation [ref=e9]:
+      - generic [ref=e10]: Utama
+      - link "Dashboard Analitik" [ref=e11] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000
+      - generic [ref=e14]: Master Kurikulum
+      - link "Data Siswa SMA" [ref=e15] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/siswa
+      - link "Mata Pelajaran" [ref=e18] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/matapelajaran
+      - link "Lingkup Materi & TP" [ref=e21] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/tujuan-pembelajaran
+      - generic [ref=e24]: Evaluasi & Asesmen
+      - link "Matriks Nilai per TP Grid" [ref=e25] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/penilaian/matrix
+        - generic [ref=e28]: Matriks Nilai per TP
+        - generic [ref=e29]: Grid
+      - link "Data Penilaian Sumatif" [ref=e30] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/penilaian
+      - link "Personalisasi AI AI" [ref=e33] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/personalisasi
+        - generic [ref=e36]: Personalisasi AI
+        - generic [ref=e37]: AI
+      - link "Laporan & Raport" [ref=e38] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/laporan
+      - generic [ref=e41]: Konfigurasi
+      - link "Pengaturan Sekolah & AI" [ref=e42] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/setting
+    - generic [ref=e47]:
+      - generic [ref=e48]: G
+      - generic [ref=e49]:
+        - paragraph [ref=e50]: Guru Pengampu
+        - paragraph [ref=e51]: Kurikulum Merdeka
+  - generic [ref=e52]:
+    - banner [ref=e53]:
+      - generic [ref=e55]:
+        - generic [ref=e56]: SMA Negeri 1 Merdeka
+        - generic [ref=e57]: •
+        - generic [ref=e58]: 2025-2026 Ganjil
+      - generic [ref=e59]:
+        - link "Input Matriks TP" [ref=e60] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/penilaian/matrix
+        - generic [ref=e63]: "KKM: 75"
+    - main [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Engine Personalisasi AI Kurikulum Merdeka" [level=2] [ref=e68]
+          - paragraph [ref=e69]: Analisis diagnostik capaian TP, pemetaan kebutuhan remedial per butir indikator, dan intervensi modalitas VARK
+        - button "Refresh Analisis AI Seluruh Siswa" [ref=e72] [cursor=pointer]
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e79]:
+            - paragraph [ref=e80]: Pemahaman Tinggi
+            - heading "8 Siswa" [level=3] [ref=e81]
+          - paragraph [ref=e85]: Siap untuk tugas pengayaan dan tutor sebaya
+        - generic [ref=e86]:
+          - generic [ref=e88]:
+            - paragraph [ref=e89]: Pemahaman Sedang
+            - heading "0 Siswa" [level=3] [ref=e90]
+          - paragraph [ref=e94]: Sebagian besar TP tuntas, penguatan sub-materi
+        - generic [ref=e95]:
+          - generic [ref=e97]:
+            - paragraph [ref=e98]: Perlu Pendampingan
+            - heading "4 Siswa" [level=3] [ref=e99]
+          - paragraph [ref=e103]: Memerlukan program remedial per butir TP
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - textbox "Cari nama atau NISN..." [ref=e107]
+          - combobox [ref=e108] [cursor=pointer]:
+            - option "Semua Kategori Pemahaman" [selected]
+            - option "Tinggi (Pengayaan)"
+            - option "Sedang (Optimal)"
+            - option "Perlu Pendampingan (Remedial)"
+          - combobox [ref=e109] [cursor=pointer]:
+            - option "Semua Gaya Belajar" [selected]
+            - option "Visual"
+            - option "Auditori"
+            - option "Kinestetik"
+            - option "Baca dan Tulis"
+          - button "Filter" [ref=e110] [cursor=pointer]
+        - table [ref=e112]:
+          - rowgroup [ref=e113]:
+            - row [ref=e114]:
+              - columnheader "Siswa SMA" [ref=e115]
+              - columnheader "Gaya Belajar" [ref=e116]
+              - columnheader "Rata-Rata Sumatif" [ref=e117]
+              - columnheader "Ketuntasan TP" [ref=e118]
+              - columnheader "Kategori Diagnostik" [ref=e119]
+              - columnheader "Rekomendasi Remedial & Pembelajaran" [ref=e120]
+              - columnheader "Aksi" [ref=e121]
+          - rowgroup [ref=e122]:
+            - row [ref=e123]:
+              - cell [ref=e124]:
+                - strong [ref=e125]: Farah Nabila Zahra
+                - text: 3143901284 • X-A
+              - cell "Baca dan Tulis" [ref=e126]
+              - cell "93.60" [ref=e128]
+              - cell "20 Tuntas, 0 Remedial" [ref=e129]
+              - cell "Tinggi" [ref=e131]
+              - cell "Modul kompilasi literatur sains mendalam, jurnal ilmiah ringkas, dan penulisan artikel ana..." [ref=e133]
+              - cell [ref=e134]:
+                - link "Diagnostik AI" [ref=e135] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/48
+            - row [ref=e136]:
+              - cell [ref=e137]:
+                - strong [ref=e138]: Anjali
+                - text: 3148538210 • X-A
+              - cell "Visual" [ref=e139]
+              - cell "92.55" [ref=e141]
+              - cell "20 Tuntas, 0 Remedial" [ref=e142]
+              - cell "Tinggi" [ref=e144]
+              - cell "Modul infografis tingkat lanjut per TP, peta konsep biologi dan sains terintegrasi, dan vi..." [ref=e146]
+              - cell [ref=e147]:
+                - link "Diagnostik AI" [ref=e148] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/44
+            - row [ref=e149]:
+              - cell [ref=e150]:
+                - strong [ref=e151]: Almira
+                - text: 3149876351 • X-A
+              - cell "Auditori" [ref=e152]
+              - cell "92.25" [ref=e154]
+              - cell "20 Tuntas, 0 Remedial" [ref=e155]
+              - cell "Tinggi" [ref=e157]
+              - cell "Podcast bedah konsep sains terkini, sesi presentasi studi kasus kelompok, dan diskusi tela..." [ref=e159]
+              - cell [ref=e160]:
+                - link "Diagnostik AI" [ref=e161] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/42
+            - row [ref=e162]:
+              - cell [ref=e163]:
+                - strong [ref=e164]: Aafif
+                - text: 3144333149 • X-A
+              - cell "Visual" [ref=e165]
+              - cell "91.60" [ref=e167]
+              - cell "20 Tuntas, 0 Remedial" [ref=e168]
+              - cell "Tinggi" [ref=e170]
+              - cell "Pertahankan pemahaman tentang sistem gerak dan syaraf manusia, serta pengembangan sikap po..." [ref=e172]
+              - cell [ref=e173]:
+                - link "Diagnostik AI" [ref=e174] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/40
+            - row [ref=e175]:
+              - cell [ref=e176]:
+                - strong [ref=e177]: Kevin Sanjaya
+                - text: 3148912304 • X-A
+              - cell "Visual" [ref=e178]
+              - cell "87.80" [ref=e180]
+              - cell "20 Tuntas, 0 Remedial" [ref=e181]
+              - cell "Tinggi" [ref=e183]
+              - cell "Modul infografis tingkat lanjut per TP, peta konsep biologi dan sains terintegrasi, dan vi..." [ref=e185]
+              - cell [ref=e186]:
+                - link "Diagnostik AI" [ref=e187] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/51
+            - row [ref=e188]:
+              - cell [ref=e189]:
+                - strong [ref=e190]: Adakitya
+                - text: 3144384515 • X-A
+              - cell "Kinestetik" [ref=e191]
+              - cell "87.00" [ref=e193]
+              - cell "20 Tuntas, 0 Remedial" [ref=e194]
+              - cell "Tinggi" [ref=e196]
+              - cell "Proyek praktikum mandiri laboratorium, pembuatan model 3D sistem organ dan mekanika, dan t..." [ref=e198]
+              - cell [ref=e199]:
+                - link "Diagnostik AI" [ref=e200] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/41
+            - row [ref=e201]:
+              - cell [ref=e202]:
+                - strong [ref=e203]: Alif
+                - text: 3144738548 • X-A
+              - cell "Baca dan Tulis" [ref=e204]
+              - cell "84.60" [ref=e206]
+              - cell "20 Tuntas, 0 Remedial" [ref=e207]
+              - cell "Tinggi" [ref=e209]
+              - cell "Modul kompilasi literatur sains mendalam, jurnal ilmiah ringkas, dan penulisan artikel ana..." [ref=e211]
+              - cell [ref=e212]:
+                - link "Diagnostik AI" [ref=e213] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/43
+            - row [ref=e214]:
+              - cell [ref=e215]:
+                - strong [ref=e216]: Budi Pratama
+                - text: 3149823411 • X-A
+              - cell "Kinestetik" [ref=e217]
+              - cell "82.05" [ref=e219]
+              - cell "20 Tuntas, 0 Remedial" [ref=e220]
+              - cell "Tinggi" [ref=e222]
+              - cell "Proyek praktikum mandiri laboratorium, pembuatan model 3D sistem organ dan mekanika, dan t..." [ref=e224]
+              - cell [ref=e225]:
+                - link "Diagnostik AI" [ref=e226] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/45
+            - row [ref=e227]:
+              - cell [ref=e228]:
+                - strong [ref=e229]: Gilang Ramadhan
+                - text: 3147819203 • X-A
+              - cell "Kinestetik" [ref=e230]
+              - cell "76.40" [ref=e232]
+              - cell "15 Tuntas, 5 Remedial" [ref=e233]
+              - cell "Perlu Pendampingan" [ref=e235]
+              - cell "Praktikum pengulangan dasar dengan torso atau model fisik, eksperimen sederhana terpandu u..." [ref=e237]
+              - cell [ref=e238]:
+                - link "Diagnostik AI" [ref=e239] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/49
+            - row [ref=e240]:
+              - cell [ref=e241]:
+                - strong [ref=e242]: Citra Dewi Lestari
+                - text: 3148723901 • X-A
+              - cell "Auditori" [ref=e243]
+              - cell "73.75" [ref=e245]
+              - cell "8 Tuntas, 12 Remedial" [ref=e246]
+              - cell "Perlu Pendampingan" [ref=e248]
+              - cell "Bimbingan lisan tatap muka dengan tutor sebaya atau guru, rekaman penjelasan audio per TP..." [ref=e250]
+              - cell [ref=e251]:
+                - link "Diagnostik AI" [ref=e252] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8000/personalisasi/46
+        - navigation "Pagination Navigation" [ref=e254]:
+          - generic [ref=e255]:
+            - paragraph [ref=e257]: Showing 1 to 10 of 12 results
+            - generic [ref=e259]:
+              - generic "pagination.previous" [ref=e260]
+              - generic [ref=e264]: "1"
+              - link "Go to page 2" [ref=e266] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/personalisasi?page=2
+                - text: "2"
+              - link "pagination.next" [ref=e267] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/personalisasi?page=2

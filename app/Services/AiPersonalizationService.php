@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Siswa;
 use App\Models\Personalisasi;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -48,11 +49,27 @@ class AiPersonalizationService
         $provider = Setting::get('ai_provider', config('services.ai.provider', 'gemini'));
         $geminiKey = Setting::get('gemini_api_key', config('services.gemini.api_key') ?: ($this->isHttpFaking() ? 'fake-test-key' : null));
         $openaiKey = Setting::get('openai_api_key', config('services.openai.api_key') ?: ($this->isHttpFaking() ? 'fake-test-key' : null));
+        $router9Key = Setting::get('router9_api_key', config('services.router9.api_key') ?: ($this->isHttpFaking() ? 'fake-test-key' : null));
 
         $aiResult = null;
         $attemptedProvider = null;
 
-        if ($provider === 'openai') {
+        if ($provider === 'router9') {
+            $attemptedProvider = 'Router9';
+            if (!empty($router9Key)) {
+                $aiResult = $this->callRouter9($siswa, $nilaiTps, $router9Key);
+            } else {
+                $this->lastReason = 'Kunci API Router9 belum diisi di Pengaturan Sistem';
+            }
+
+            // Jika panggilan Router9 tidak berhasil, kembalikan alasan spesifik tanpa beralih diam-diam ke OpenAI
+            if (!$aiResult) {
+                $model = Setting::get('router9_model', config('services.router9.model', 'ag/gemini-3.8-flash'));
+                $reason = $this->lastReason ?? "Panggilan ke Router9 Gateway ({$model}) tidak berhasil.";
+                Log::warning("Panggilan Router9 ({$model}) tidak berhasil: {$reason}");
+                return $this->fallbackGenerate($siswa, $nilaiTps, $reason);
+            }
+        } elseif ($provider === 'openai') {
             $attemptedProvider = 'OpenAI';
             if (!empty($openaiKey)) {
                 $aiResult = $this->callOpenAi($siswa, $nilaiTps, $openaiKey);
@@ -60,8 +77,13 @@ class AiPersonalizationService
                 $this->lastReason = 'Kunci API OpenAI belum diisi di Pengaturan Sistem';
             }
 
-            // Jika panggilan OpenAI tidak berhasil / tidak di-mock tetapi ada Gemini, coba Gemini
-            if (!$aiResult && !empty($geminiKey)) {
+            // Jika panggilan OpenAI tidak berhasil / tidak di-mock tetapi ada Router9 atau Gemini
+            if (!$aiResult && !empty($router9Key)) {
+                $aiResult = $this->callRouter9($siswa, $nilaiTps, $router9Key);
+                if ($aiResult) {
+                    $attemptedProvider = 'Router9';
+                }
+            } elseif (!$aiResult && !empty($geminiKey) && (!Cache::has('gemini_quota_exhausted') || $this->isHttpFaking())) {
                 $geminiResult = $this->callGemini($siswa, $nilaiTps, $geminiKey);
                 if ($geminiResult) {
                     $aiResult = $geminiResult;
@@ -81,8 +103,14 @@ class AiPersonalizationService
                 $this->lastReason = 'Kunci API Gemini belum diisi di Pengaturan Sistem';
             }
 
-            // Jika panggilan Gemini tidak berhasil tetapi ada kunci OpenAI, failover otomatis ke OpenAI
-            if (!$aiResult && !empty($openaiKey)) {
+            // Jika panggilan Gemini tidak berhasil tetapi ada Router9 atau OpenAI, failover otomatis
+            if (!$aiResult && !empty($router9Key)) {
+                Log::info('Panggilan Gemini tidak berhasil, beralih otomatis ke Router9 (Gemini Gateway)...');
+                $aiResult = $this->callRouter9($siswa, $nilaiTps, $router9Key);
+                if ($aiResult) {
+                    $attemptedProvider = 'Router9';
+                }
+            } elseif (!$aiResult && !empty($openaiKey)) {
                 Log::info('Panggilan Gemini tidak berhasil, beralih otomatis ke OpenAI...');
                 $aiResult = $this->callOpenAi($siswa, $nilaiTps, $openaiKey);
                 if ($aiResult) {
@@ -94,11 +122,15 @@ class AiPersonalizationService
         // Jika panggilan AI berhasil dan menghasilkan struktur data yang valid
         if ($aiResult && !empty($aiResult['kategori_pemahaman'])) {
             $this->lastSource = $attemptedProvider ?? 'AI Cloud';
-            $model = $attemptedProvider === 'OpenAI'
-                ? Setting::get('openai_model', config('services.openai.model', 'gpt-4o-mini'))
-                : Setting::get('gemini_model', config('services.gemini.model', 'gemini-3.5-flash'));
+            $model = match($attemptedProvider) {
+                'Router9' => Setting::get('router9_model', config('services.router9.model', 'ag/gemini-2.5-flash')),
+                'OpenAI' => Setting::get('openai_model', config('services.openai.model', 'gpt-4o-mini')),
+                default => Setting::get('gemini_model', config('services.gemini.model', 'gemini-3.5-flash')),
+            };
             $this->lastModel = $model;
-            $this->lastReason = "Dianalisis langsung oleh {$attemptedProvider} API (Model: {$model})";
+            $this->lastReason = $attemptedProvider === 'Router9'
+                ? "Dianalisis via Router9 Gateway: {$model}"
+                : "Dianalisis langsung oleh {$attemptedProvider}: {$model}";
             $aiResult['sumber_analisis'] = $this->lastSource;
             $aiResult['keterangan_sumber'] = $this->lastReason;
             return $this->savePersonalisasi($siswa, $nilaiTps, $aiResult);
@@ -140,6 +172,7 @@ class AiPersonalizationService
             $prompt = $this->buildPrompt($siswa, $nilaiTps);
 
             $response = Http::timeout(25)
+                ->connectTimeout(8)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post($url, [
                     'contents' => [
@@ -162,6 +195,9 @@ class AiPersonalizationService
                     return $this->parseJson($text);
                 }
             } else {
+                if ($response->status() === 429) {
+                    Cache::put('gemini_quota_exhausted', true, now()->addHours(6));
+                }
                 Log::warning('Gemini AI call returned non-200: ' . $response->body());
             }
         } catch (\Throwable $e) {
@@ -182,7 +218,8 @@ class AiPersonalizationService
 
             $prompt = $this->buildPrompt($siswa, $nilaiTps);
 
-            $response = Http::timeout(25)
+            $response = Http::timeout(75)
+                ->connectTimeout(10)
                 ->withToken($apiKey)
                 ->post($url, [
                     'model' => $model,
@@ -217,91 +254,165 @@ class AiPersonalizationService
     }
 
     /**
+     * Panggilan ke Router9 API (OpenAI-compatible gateway ke Google Gemini)
+     */
+    public function callRouter9(Siswa $siswa, $nilaiTps, string $apiKey, ?string $customModel = null, ?string $customBaseUrl = null): ?array
+    {
+        try {
+            $model = $customModel ?: Setting::get('router9_model', config('services.router9.model', 'ag/gemini-3.8-flash'));
+            $baseUrl = rtrim($customBaseUrl ?: Setting::get('router9_base_url', config('services.router9.base_url', 'https://api.router9.com/v1')), '/');
+            $url = $baseUrl . '/chat/completions';
+
+            $prompt = $this->buildPrompt($siswa, $nilaiTps);
+
+            $payload = [
+                'model' => $model,
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Anda adalah asisten pakar pedagogi Kurikulum Merdeka SMA (Personalized Learning Assessment - PLA) yang menganalisis ketuntasan Tujuan Pembelajaran (TP) per Lingkup Materi dan menyusun rekomendasi remedial dan pengayaan adaptif berbasis gaya belajar VARK dalam format JSON. Buat catatan_guru secara sangat personal, unik, dan mendalam berdasarkan nama siswa, capaian butir TP spesifik, dan gaya belajar anak, tanpa format template kaku.'
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt
+                    ]
+                ],
+                'stream' => false,
+                'response_format' => ['type' => 'json_object'],
+                'temperature' => 0.4,
+            ];
+
+            $response = Http::timeout(120)
+                ->connectTimeout(15)
+                ->withToken($apiKey)
+                ->post($url, $payload);
+
+            // Jika gateway/model tertentu tidak mendukung response_format json_object (error 400), coba ulang tanpa response_format
+            if (!$response->successful() && $response->status() === 400 && isset($payload['response_format'])) {
+                unset($payload['response_format']);
+                $response = Http::timeout(120)
+                    ->connectTimeout(15)
+                    ->withToken($apiKey)
+                    ->post($url, $payload);
+            }
+
+            if ($response->successful()) {
+                $content = $response->json('choices.0.message.content');
+
+                // Jika server mengirim format SSE stream chunk (data: {...})
+                if (empty($content) && str_contains($response->body(), 'data: ')) {
+                    $assembled = '';
+                    foreach (explode("\n", $response->body()) as $line) {
+                        $line = trim($line);
+                        if (str_starts_with($line, 'data: ') && $line !== 'data: [DONE]') {
+                            $chunk = json_decode(substr($line, 6), true);
+                            $assembled .= $chunk['choices'][0]['delta']['content'] ?? '';
+                        }
+                    }
+                    if (!empty($assembled)) {
+                        $content = $assembled;
+                    }
+                }
+
+                if ($content) {
+                    return $this->parseJson($content);
+                }
+            } else {
+                Log::warning('Router9 API call returned non-200: ' . $response->body());
+                $this->lastReason = 'Router9 API mengembalikan status ' . $response->status() . ': ' . ($response->json('error.message') ?? $response->body());
+            }
+        } catch (\Throwable $e) {
+            Log::error('Error calling Router9 API: ' . $e->getMessage());
+            $this->lastReason = 'Koneksi ke Router9 gagal atau timeout (120s): ' . $e->getMessage();
+        }
+
+        return null;
+    }
+
+    /**
      * Bangun prompt Kurikulum Merdeka SMA untuk LLM
      */
     public function buildPrompt(Siswa $siswa, $nilaiTps): string
     {
-        $tuntasList = [];
-        $belumTuntasList = [];
-
+        $tpDataList = [];
         foreach ($nilaiTps as $item) {
             $tp = $item->tujuanPembelajaran;
             $lm = $tp->lingkupMateri ?? null;
-            $lmTitle = $lm ? "{$lm->kode_lm} ({$lm->judul_materi})" : 'Materi';
-            $entry = "- [{$lmTitle}] {$tp->kode_tp}: {$tp->deskripsi_tp} => Nilai: {$item->nilai} ({$item->status_ketuntasan})";
-
-            if ($item->status_ketuntasan === 'Tuntas') {
-                $tuntasList[] = $entry;
-            } else {
-                $belumTuntasList[] = $entry;
-            }
+            $tpDataList[] = [
+                'kode_tp' => $tp->kode_tp ?? 'TP',
+                'deskripsi_tp' => $tp->deskripsi_tp ?? '',
+                'lingkup_materi' => $lm->judul_materi ?? 'Materi IPAS',
+                'target_kkm' => (float) ($tp->target_ketercapaian ?? 75),
+                'nilai' => (float) $item->nilai,
+                'status_ketuntasan' => $item->status_ketuntasan,
+            ];
         }
 
-        $tuntasText = count($tuntasList) > 0 ? implode("\n", $tuntasList) : "Belum ada TP tuntas.";
-        $belumTuntasText = count($belumTuntasList) > 0 ? implode("\n", $belumTuntasList) : "Semua TP berhasil tuntas.";
-
+        $dataJson = json_encode($tpDataList, JSON_UNESCAPED_UNICODE);
         $avgScore = $nilaiTps->count() > 0 ? round($nilaiTps->avg('nilai'), 2) : 0;
         $gayaClean = str_replace(['Baca/Tulis', 'baca/tulis'], ['Baca dan Tulis', 'baca dan tulis'], $siswa->gaya_belajar ?? 'Visual');
+        $namaMapel = $nilaiTps->first()->tujuanPembelajaran->lingkupMateri->mataPelajaran->nama_mapel ?? 'IPAS';
 
         return <<<PROMPT
-            Analisis data capaian sumatif per Tujuan Pembelajaran (TP) siswa SMA berikut untuk menyusun rekomendasi pembelajaran adaptif (Personalized Learning Assessment - PLA Kurikulum Merdeka):
+Anda adalah ahli evaluasi pembelajaran Kurikulum Merdeka (Personalized Learning Assessment - PLA).
+Tugas: Lakukan analisis diagnostik hasil evaluasi sumatif Tujuan Pembelajaran (TP) mata pelajaran {$namaMapel} untuk siswa {$siswa->nama}.
 
-            === PROFIL SISWA SMA ===
-            Nama Siswa: {$siswa->nama}
-            NISN: {$siswa->nisn}
-            Kelas: {$siswa->kelas}
-            Gaya Belajar Dominan (VARK): {$gayaClean}
-            Rata-Rata Nilai Sumatif: {$avgScore}
+DATA SISWA:
+- Nama: {$siswa->nama} (NISN: {$siswa->nisn}, Kelas: {$siswa->kelas})
+- Gaya Belajar: {$gayaClean}
+- Nilai Rata-rata: {$avgScore}
+- Data Capaian TP:
+{$dataJson}
 
-            === DAFTAR TP BELUM TUNTAS (PERLU REMEDIAL) ===
-            {$belumTuntasText}
+PEDOMAN ANALISIS:
+1. Rentang Nilai TP:
+   - 90-100: "Sangat Baik" (pertahankan dan pengayaan).
+   - 80-89: "Baik" (penguatan penerapan konsep).
+   - 65-79: "Cukup / Perlu Penguatan" (latihan terbimbing).
+   - < 65: "Perlu Pendampingan" (pembelajaran ulang remedial).
+2. Kategori Pemahaman Keseluruhan:
+   - >= 80: "Tinggi", 65-79: "Sedang", < 65: "Perlu Pendampingan".
+3. Catatan Guru:
+   - Awali dengan: "Rekomendasi Guru (AI): "
+   - Tulis 2 sampai 3 paragraf komprehensif: (1) Capaian kekuatan siswa dan materi yang dikuasai, (2) Diagnosis kendala pada TP yang belum tuntas atau perlu bimbingan, (3) Strategi bimbingan instruksional guru yang selaras modalitas gaya belajar {$gayaClean}.
+4. Analisis Per TP (Jumlah elemen WAJIB persis sama dengan jumlah TP di data input):
+   - "interpretasi_capaian": Awali dengan kategori rentang nilai di atas, lalu ulas ringkas ketercapaian materi TP.
+   - "tingkat_pemahaman_materi": Penjelasan konkret tingkat penguasaan konsep sesuai nilai.
+   - "aspek_tindak_lanjut": Awali "Perlu dipertahankan:" (jika tuntas dan nilai >= 80) atau "Perlu ditingkatkan:" (jika belum tuntas atau nilai < 80).
+   - "umpan_balik_siswa": Evaluasi dan motivasi langsung yang konstruktif untuk {$siswa->nama}.
+   - "rekomendasi_siswa": Langkah belajar mandiri konkret sesuai topik TP dan modalitas gaya belajar {$gayaClean}.
+   - "rekomendasi_guru": Tindakan pembelajaran diferensiasi konkret bagi guru di kelas.
+5. Jangan gunakan karakter garis miring atau tanda em dash dalam narasi teks. Gunakan kata 'dan' atau 'atau'.
 
-            === DAFTAR TP TUNTAS (KEKUATAN SISWA) ===
-            {$tuntasText}
-
-            === ATURAN KHUSUS ULASAN EVALUASI DAN REKOMENDASI GURU (catatan_guru) ===
-            Tulis narasi ulasan yang SANGAT PERSONAL, MENDALAM, DAN ALAMI langsung oleh AI untuk siswa bernama {$siswa->nama}:
-            1. JANGAN gunakan kalimat template umum, kalimat hafalan, atau potongan boilerplate yang kaku. Tulislah selayaknya catatan evaluasi otentik seorang guru pakar yang mengamati langsung proses belajar {$siswa->nama}.
-            2. Sebutkan nama {$siswa->nama} secara langsung dalam narasi, dan rujuk butir-butir TP atau materi konkret yang menjadi kekuatan maupun kelemahan belajarnya berdasarkan data capaian di atas.
-            3. KETENTUAN SIKAP DAN NADA BAHASA:
-               - JIKA NILAI SISWA TIDAK BAGUS (Kategori Sedang atau Perlu Pendampingan, atau ada TP belum tuntas):
-                 JANGAN BANYAK DIPUJI. Hindari sanjungan kosong seperti 'luar biasa', 'sangat memuaskan', atau 'sangat baik'. Sampaikan secara objektif, jujur, dan transparan materi atau konsep apa yang belum dikuasai (sebutkan kode dan topik TP-nya), lalu berikan MASUKAN YANG MEMBANGUN (KONSTRUKTIF) mengenai langkah nyata perbaikan belajar yang harus dilakukan siswa bersama guru mata pelajaran.
-               - JIKA NILAI SISWA TINGGI (Kategori Tinggi, semua TP tuntas):
-                 Berikan apresiasi wajar berbasis bukti atas ketuntasan materi tersebut, serta rekomendasikan pengayaan mandiri dan peran sebagai tutor sebaya.
-            4. Hubungkan masukan dengan modalitas belajar dominan ({$gayaClean}) agar saran tindak lanjutnya kontekstual dan aplikatif bagi guru pengampu.
-            5. Awali catatan dengan: "Rekomendasi Guru (AI): " diikuti oleh narasi personal 1 sampai 2 paragraf tersebut.
-
-            === ATURAN REKOMENDASI PER BUTIR TP (rekomendasi_per_tp) ===
-            Untuk SETIAP butir TP pada daftar di atas, buat 3 poin rekomendasi tindak lanjut yang konkret:
-            - Poin 1: Intervensi konseptual sesuai gaya belajar {$gayaClean} siswa SMA.
-            - Poin 2: Aktivitas bimbingan dan latihan terarah (tutor sebaya atau latihan bertingkat).
-            - Poin 3: Evaluasi formatif perbaikan (untuk remedial) atau portofolio/mini proyek (untuk pengayaan).
-
-            === INSTRUKSI KELUARAN (WAJIB JSON VALID) ===
-            Hasilkan output HANYA berupa JSON valid dengan skema berikut:
-            {
-            "skor_performa": {$avgScore},
-            "kategori_pemahaman": "Tinggi" (jika rata-rata >= 80) ATAU "Sedang" (65-79.99) ATAU "Perlu Pendampingan" (< 65 atau banyak TP belum tuntas),
-            "gaya_belajar_rekomendasi": "{$gayaClean}",
-            "distribusi_gaya_belajar": {
-                "Visual": 45,
-                "Auditori": 25,
-                "Kinestetik": 18,
-                "Baca dan Tulis": 12
-            },
-            "rekomendasi_materi": "Rangkuman rekomendasi materi bahan ajar terarah per butir TP belum tuntas, disesuaikan gaya belajar {$gayaClean} siswa SMA.",
-            "rekomendasi_aktivitas": "• Strategi aktivitas pembelajaran adaptif 1\\n• Strategi aktivitas pembelajaran adaptif 2\\n• Proyek pengayaan atau remedial 3",
-            "catatan_guru": "Rekomendasi Guru (AI): [Tulis 1-2 paragraf narasi ulasan yang sangat personal untuk {$siswa->nama}, menyebutkan materi TP spesifik yang dikuasai maupun yang belum tuntas, dengan nada objektif, konstruktif, dan sesuai gaya belajar {$gayaClean}]",
-            "rekomendasi_per_tp": {
-                "kode_tp_contoh": [
-                "1. Intervensi konsep sesuai modalitas...",
-                "2. Bimbingan dan latihan terarah...",
-                "3. Asesmen perbaikan atau pengayaan..."
-                ]
-            }
-            }
-            PENTING: Jangan gunakan karakter tanda garis miring (/) atau tanda em dash dalam narasi teks hasil analisis AI. Gunakan kata penghubung 'dan' atau 'atau'.
-        PROMPT;
+FORMAT KELUARAN (HANYA JSON VALID TANPA MARKDOWN):
+{
+  "skor_performa": {$avgScore},
+  "kategori_pemahaman": "Tinggi ATAU Sedang ATAU Perlu Pendampingan",
+  "gaya_belajar_rekomendasi": "{$gayaClean}",
+  "distribusi_gaya_belajar": {
+    "Visual": 45,
+    "Auditori": 25,
+    "Kinestetik": 18,
+    "Baca dan Tulis": 12
+  },
+  "rekomendasi_materi": "Topik pengayaan dan remedial yang terarah",
+  "rekomendasi_aktivitas": "• Aktivitas belajar 1\\n• Aktivitas belajar 2",
+  "catatan_guru": "Rekomendasi Guru (AI): Sintesis diagnostik komprehensif...",
+  "analisis_per_tp": [
+    {
+      "kode_tp": "Kode TP sesuai data masukan",
+      "nilai": 85,
+      "status_ketuntasan": "Tuntas",
+      "interpretasi_capaian": "Baik. Capaian materi...",
+      "tingkat_pemahaman_materi": "Penguasaan konsep...",
+      "aspek_tindak_lanjut": "Perlu dipertahankan: ...",
+      "umpan_balik_siswa": "Umpan balik...",
+      "rekomendasi_siswa": "Langkah belajar...",
+      "rekomendasi_guru": "Aksi guru..."
+    }
+  ]
+}
+PROMPT;
     }
 
     /**
@@ -416,11 +527,28 @@ class AiPersonalizationService
         $gayaBelajar = $data['gaya_belajar_rekomendasi'] ?? $siswa->gaya_belajar ?? 'Visual';
 
         // Simpan rekomendasi AI (3 rekomendasi) per butir TP ke kolom catatan di nilai_sumatif_tps
+        $analisisPerTp = $data['analisis_per_tp'] ?? [];
         $rekomendasiPerTp = $data['rekomendasi_per_tp'] ?? [];
+
         foreach ($nilaiTps as $item) {
             $kode = $item->tujuanPembelajaran->kode_tp ?? '';
             $rek = null;
-            if (is_array($rekomendasiPerTp)) {
+
+            // 1. Cek dari struktur analisis_per_tp (spesifikasi prompt resmi)
+            if (is_array($analisisPerTp) && !empty($analisisPerTp)) {
+                foreach ($analisisPerTp as $row) {
+                    if (is_array($row) && isset($row['kode_tp']) && $row['kode_tp'] === $kode) {
+                        $aspek = $row['aspek_tindak_lanjut'] ?? ($item->status_ketuntasan === 'Tuntas' ? 'Perlu dipertahankan capaian konsep' : 'Perlu ditingkatkan penguasaan materi');
+                        $rekSiswa = $row['rekomendasi_siswa'] ?? ($row['umpan_balik_siswa'] ?? 'Pelajari kembali materi inti terkait.');
+                        $rekGuru = $row['rekomendasi_guru'] ?? 'Berikan evaluasi formatif terarah.';
+                        $rek = "1. {$aspek}\n2. Langkah Belajar Siswa: {$rekSiswa}\n3. Rencana Tindak Lanjut Guru: {$rekGuru}";
+                        break;
+                    }
+                }
+            }
+
+            // 2. Fallback cek dari rekomendasi_per_tp jika format sebelumnya
+            if (!$rek && is_array($rekomendasiPerTp)) {
                 if (isset($rekomendasiPerTp[$kode])) {
                     $rek = $rekomendasiPerTp[$kode];
                 } else {
@@ -618,5 +746,198 @@ class AiPersonalizationService
         } catch (\Throwable $e) {
         }
         return false;
+    }
+
+    /**
+     * Uji koneksi langsung ke provider AI (Router9, Gemini, OpenAI, atau Fallback)
+     */
+    public function testConnection(string $provider, ?string $customModel = null): array
+    {
+        $startTime = microtime(true);
+
+        if ($provider === 'router9') {
+            $apiKey = Setting::get('router9_api_key', config('services.router9.api_key', ''));
+            if (empty($apiKey)) {
+                return [
+                    'success' => false,
+                    'provider' => 'Router9 Gateway',
+                    'message' => 'Router9 API Key belum terkonfigurasi di sistem.',
+                ];
+            }
+
+            $model = $customModel ?: Setting::get('router9_model', config('services.router9.model', 'ag/gemini-3.8-flash'));
+            $baseUrl = rtrim(Setting::get('router9_base_url', config('services.router9.base_url', 'https://api.router9.com/v1')), '/');
+            $url = $baseUrl . '/chat/completions';
+
+            try {
+                $response = Http::timeout(20)
+                    ->connectTimeout(8)
+                    ->withToken($apiKey)
+                    ->post($url, [
+                        'model' => $model,
+                        'messages' => [
+                            ['role' => 'user', 'content' => 'Tes koneksi API. Balas hanya dengan kalimat pendek: Koneksi Router9 Berhasil.']
+                        ],
+                        'max_tokens' => 40,
+                    ]);
+
+                $latency = round((microtime(true) - $startTime) * 1000);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $reply = $data['choices'][0]['message']['content'] ?? 'Koneksi terverifikasi.';
+                    return [
+                        'success' => true,
+                        'provider' => 'Router9 Gateway',
+                        'model' => $model,
+                        'latency_ms' => $latency,
+                        'message' => 'Koneksi ke Router9 Gateway berhasil dan aktif!',
+                        'reply' => trim($reply),
+                    ];
+                }
+
+                $err = $response->json('error.message') ?? $response->body();
+                return [
+                    'success' => false,
+                    'provider' => 'Router9 Gateway',
+                    'model' => $model,
+                    'status_code' => $response->status(),
+                    'message' => "Gagal terhubung ke Router9 (HTTP {$response->status()}): {$err}",
+                ];
+            } catch (\Throwable $e) {
+                return [
+                    'success' => false,
+                    'provider' => 'Router9 Gateway',
+                    'model' => $model,
+                    'message' => 'Koneksi Router9 gagal atau timeout: ' . $e->getMessage(),
+                ];
+            }
+        }
+
+        if ($provider === 'gemini') {
+            $apiKey = Setting::get('gemini_api_key', config('services.gemini.api_key', ''));
+            if (empty($apiKey)) {
+                return [
+                    'success' => false,
+                    'provider' => 'Google Gemini Langsung',
+                    'message' => 'Google Gemini API Key belum diisi di Pengaturan.',
+                ];
+            }
+
+            $model = Setting::get('gemini_model', config('services.gemini.model', 'gemini-2.5-flash'));
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+
+            try {
+                $response = Http::timeout(20)
+                    ->connectTimeout(8)
+                    ->post($url, [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => 'Tes koneksi API. Balas hanya dengan kalimat pendek: Koneksi Gemini Berhasil.']
+                                ]
+                            ]
+                        ]
+                    ]);
+
+                $latency = round((microtime(true) - $startTime) * 1000);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $reply = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Koneksi terverifikasi.';
+                    return [
+                        'success' => true,
+                        'provider' => 'Google Gemini Langsung',
+                        'model' => $model,
+                        'latency_ms' => $latency,
+                        'message' => 'Koneksi ke Google Gemini API berhasil dan aktif!',
+                        'reply' => trim($reply),
+                    ];
+                }
+
+                $err = $response->json('error.message') ?? $response->body();
+                return [
+                    'success' => false,
+                    'provider' => 'Google Gemini Langsung',
+                    'model' => $model,
+                    'status_code' => $response->status(),
+                    'message' => "Gagal terhubung ke Gemini (HTTP {$response->status()}): {$err}",
+                ];
+            } catch (\Throwable $e) {
+                return [
+                    'success' => false,
+                    'provider' => 'Google Gemini Langsung',
+                    'model' => $model,
+                    'message' => 'Koneksi Gemini gagal atau timeout: ' . $e->getMessage(),
+                ];
+            }
+        }
+
+        if ($provider === 'openai') {
+            $apiKey = Setting::get('openai_api_key', config('services.openai.api_key', ''));
+            if (empty($apiKey)) {
+                return [
+                    'success' => false,
+                    'provider' => 'OpenAI API',
+                    'message' => 'OpenAI API Key belum diisi di Pengaturan.',
+                ];
+            }
+
+            $model = Setting::get('openai_model', config('services.openai.model', 'gpt-4o-mini'));
+            $url = 'https://api.openai.com/v1/chat/completions';
+
+            try {
+                $response = Http::timeout(20)
+                    ->connectTimeout(8)
+                    ->withToken($apiKey)
+                    ->post($url, [
+                        'model' => $model,
+                        'messages' => [
+                            ['role' => 'user', 'content' => 'Tes koneksi API. Balas pendek: Koneksi OpenAI Berhasil.']
+                        ],
+                        'max_tokens' => 40,
+                    ]);
+
+                $latency = round((microtime(true) - $startTime) * 1000);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $reply = $data['choices'][0]['message']['content'] ?? 'Koneksi terverifikasi.';
+                    return [
+                        'success' => true,
+                        'provider' => 'OpenAI API',
+                        'model' => $model,
+                        'latency_ms' => $latency,
+                        'message' => 'Koneksi ke OpenAI API berhasil dan aktif!',
+                        'reply' => trim($reply),
+                    ];
+                }
+
+                $err = $response->json('error.message') ?? $response->body();
+                return [
+                    'success' => false,
+                    'provider' => 'OpenAI API',
+                    'model' => $model,
+                    'status_code' => $response->status(),
+                    'message' => "Gagal terhubung ke OpenAI (HTTP {$response->status()}): {$err}",
+                ];
+            } catch (\Throwable $e) {
+                return [
+                    'success' => false,
+                    'provider' => 'OpenAI API',
+                    'model' => $model,
+                    'message' => 'Koneksi OpenAI gagal atau timeout: ' . $e->getMessage(),
+                ];
+            }
+        }
+
+        return [
+            'success' => true,
+            'provider' => 'Mode Heuristik Offline',
+            'model' => 'PLA Merdeka Engine (Internal)',
+            'latency_ms' => 0,
+            'message' => 'Mode Heuristik offline selalu siap dan aktif tanpa memerlukan koneksi API eksternal.',
+            'reply' => 'Aturan pedagogi siap digunakan.',
+        ];
     }
 }

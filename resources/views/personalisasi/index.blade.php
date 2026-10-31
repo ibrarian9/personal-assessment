@@ -6,9 +6,9 @@
 <!-- Page Header -->
 <x-page-header title="Engine Personalisasi AI Kurikulum Merdeka" subtitle="Analisis diagnostik capaian TP, pemetaan kebutuhan remedial per butir indikator, dan intervensi modalitas VARK">
     <x-slot:actions>
-        <form action="{{ route('personalisasi.generate') }}" method="POST" class="inline">
+        <form action="{{ route('personalisasi.generate') }}" method="POST" class="inline" onsubmit="if(!confirm('Jalankan analisis diagnostik AI untuk seluruh siswa SMA?')) return false; window.submitWithAiLoading(event, this, 'Analisis AI Seluruh Siswa SMA', 'Mengevaluasi seluruh siswa SMA...');">
             @csrf
-            <x-button type="submit" variant="primary" onclick="return confirm('Jalankan analisis diagnostik AI untuk seluruh siswa SMA?')">
+            <x-button type="submit" variant="primary">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
@@ -74,9 +74,9 @@
 
         <x-filter-select name="kategori">
             <option value="">Semua Kategori Pemahaman</option>
-            <option value="Tinggi" {{ $kategori == 'Tinggi' ? 'selected' : '' }}>Tinggi (Pengayaan)</option>
-            <option value="Sedang" {{ $kategori == 'Sedang' ? 'selected' : '' }}>Sedang (Optimal)</option>
-            <option value="Perlu Pendampingan" {{ $kategori == 'Perlu Pendampingan' ? 'selected' : '' }}>Perlu Pendampingan (Remedial)</option>
+            <option value="Tinggi" {{ $kategori == 'Tinggi' ? 'selected' : '' }}>Kategori Tinggi: Pengayaan</option>
+            <option value="Sedang" {{ $kategori == 'Sedang' ? 'selected' : '' }}>Kategori Sedang: Optimal</option>
+            <option value="Perlu Pendampingan" {{ $kategori == 'Perlu Pendampingan' ? 'selected' : '' }}>Kategori Perlu Pendampingan: Remedial</option>
         </x-filter-select>
 
         <x-filter-select name="gaya_belajar">

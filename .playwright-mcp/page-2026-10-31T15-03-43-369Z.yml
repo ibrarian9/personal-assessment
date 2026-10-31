@@ -1,0 +1,637 @@
+- generic [active] [ref=f28e1]:
+  - complementary [ref=f28e2]:
+    - link "TP PLA Merdeka SMA Assessment Engine" [ref=f28e4] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000
+      - generic [ref=f28e5]: TP
+      - generic [ref=f28e6]:
+        - heading "PLA Merdeka" [level=1] [ref=f28e7]
+        - paragraph [ref=f28e8]: SMA Assessment Engine
+    - navigation [ref=f28e9]:
+      - generic [ref=f28e10]: Utama
+      - link "Dashboard Analitik" [ref=f28e11] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000
+      - generic [ref=f28e14]: Master Kurikulum
+      - link "Data Siswa SMA" [ref=f28e15] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/siswa
+      - link "Mata Pelajaran" [ref=f28e18] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/matapelajaran
+      - link "Lingkup Materi & TP" [ref=f28e21] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/tujuan-pembelajaran
+      - generic [ref=f28e24]: Evaluasi & Asesmen
+      - link "Matriks Nilai per TP Grid" [ref=f28e25] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/penilaian/matrix
+        - generic [ref=f28e28]: Matriks Nilai per TP
+        - generic [ref=f28e29]: Grid
+      - link "Data Penilaian Sumatif" [ref=f28e30] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/penilaian
+      - link "Personalisasi AI AI" [ref=f28e33] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/personalisasi
+        - generic [ref=f28e36]: Personalisasi AI
+        - generic [ref=f28e37]: AI
+      - link "Laporan & Raport" [ref=f28e38] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/laporan
+      - generic [ref=f28e41]: Konfigurasi
+      - link "Pengaturan Sekolah & AI" [ref=f28e42] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/setting
+    - generic [ref=f28e47]:
+      - generic [ref=f28e48]: G
+      - generic [ref=f28e49]:
+        - paragraph [ref=f28e50]: Guru Pengampu
+        - paragraph [ref=f28e51]: Kurikulum Merdeka
+  - generic [ref=f28e52]:
+    - banner [ref=f28e53]:
+      - generic [ref=f28e55]:
+        - generic [ref=f28e56]: SMA Negeri 1 Merdeka
+        - generic [ref=f28e57]: •
+        - generic [ref=f28e58]: 2025-2026 Ganjil
+      - generic [ref=f28e59]:
+        - link "Input Matriks TP" [ref=f28e60] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/penilaian/matrix
+        - generic [ref=f28e63]: "KKM: 75"
+    - main [ref=f28e65]:
+      - generic [ref=f28e66]:
+        - generic [ref=f28e67]:
+          - generic [ref=f28e68]:
+            - generic [ref=f28e69]:
+              - generic [ref=f28e70]: Kurikulum Merdeka SMA
+              - generic [ref=f28e72]: "NISN: 3144333149"
+            - heading "Profil Personalisasi & Diagnostik TP" [level=2] [ref=f28e73]
+            - paragraph [ref=f28e74]:
+              - text: Rekomendasi pembelajaran adaptif berbasis ketercapaian Tujuan Pembelajaran dan modalitas belajar untuk
+              - strong [ref=f28e75]: Aafif
+              - text: ", Kelas X-A."
+          - generic [ref=f28e76]:
+            - button "Analisis Ulang dengan AI" [ref=f28e78] [cursor=pointer]
+            - link "Kembali ke Daftar" [ref=f28e82] [cursor=pointer]:
+              - /url: http://127.0.0.1:8000/personalisasi
+        - generic [ref=f28e87]:
+          - generic [ref=f28e92]:
+            - generic [ref=f28e93]:
+              - generic [ref=f28e94]: "Status Sumber Analisis:"
+              - generic [ref=f28e95]: Dimuat dari Database
+              - generic [ref=f28e97]: OpenAI GPT (AI Cloud)
+            - paragraph [ref=f28e99]:
+              - text: Data rekomendasi ini dimuat dari arsip database (tersimpan pada
+              - strong [ref=f28e100]: 31 Oktober 2026, 14:56
+              - text: "). Keterangan: Dianalisis langsung oleh OpenAI API (Model: gpt-4o-mini)."
+          - generic [ref=f28e101]: "ID #443"
+        - generic [ref=f28e103]:
+          - generic [ref=f28e104]:
+            - generic [ref=f28e105]:
+              - text: Identitas Siswa
+              - generic [ref=f28e106]:
+                - heading "Aafif" [level=3] [ref=f28e107]
+                - generic [ref=f28e108]: Kelas X-A
+                - generic [ref=f28e109]: "NISN: 3144333149"
+              - generic [ref=f28e110]:
+                - generic [ref=f28e111]: "Gaya Belajar (VARK):"
+                - generic [ref=f28e112]: Visual
+                - generic [ref=f28e113]: •
+                - generic [ref=f28e114]: "Status Ketuntasan:"
+                - generic [ref=f28e115]: 20 Tuntas, 0 Perlu Remedial
+            - generic [ref=f28e116]: Status Diagnostik AI Aktif
+          - generic [ref=f28e120]:
+            - generic [ref=f28e121]:
+              - generic [ref=f28e122]: Rata-Rata Capaian Sumatif
+              - generic [ref=f28e123]: "91.60"
+              - paragraph [ref=f28e124]: Skor performa gabungan 20 butir TP
+            - generic [ref=f28e125]:
+              - generic [ref=f28e126]:
+                - generic [ref=f28e127]: Kategori Capaian
+                - generic [ref=f28e128]: "Kategori: Tinggi"
+              - paragraph [ref=f28e130]: Berdasarkan pedoman Kurikulum Merdeka
+            - generic [ref=f28e131]:
+              - generic [ref=f28e132]:
+                - generic [ref=f28e133]: Pencapaian KKM (75)
+                - generic [ref=f28e134]: 20 dari 20 TP tuntas
+              - paragraph [ref=f28e135]: Seluruh butir mencapai target KKM
+        - generic [ref=f28e136]:
+          - generic [ref=f28e137]:
+            - generic [ref=f28e142]:
+              - generic [ref=f28e143]:
+                - heading "Ulasan Evaluasi & Rekomendasi Guru (AI):" [level=3] [ref=f28e144]
+                - generic [ref=f28e145]: OpenAI
+              - paragraph [ref=f28e146]: Evaluasi diagnostik komprehensif capaian kompetensi siswa dan panduan instruksional bagi guru
+            - link "Sesuaikan Catatan" [ref=f28e147] [cursor=pointer]:
+              - /url: "#catatan_guru_section"
+          - generic [ref=f28e151]:
+            - paragraph [ref=f28e152]: "Rekomendasi Guru (AI): Aafif menunjukkan performa yang sangat baik dengan rata-rata nilai 91.6. Ia telah menguasai dengan sangat baik topik-topik seperti Sistem Gerak dan Syaraf Manusia serta Sistem Reproduksi dan Pubertas, yang tercermin dari nilai tinggi di sebagian besar TP. Namun, ada beberapa TP yang menunjukkan nilai di bawah 90, seperti TP 2.4, di mana Aafif memperoleh nilai 87, yang menunjukkan bahwa ada ruang untuk penguatan lebih lanjut dalam memahami cara merancang materi edukasi yang efektif."
+            - paragraph [ref=f28e153]: Untuk TP 2.4, yang berfokus pada penerimaan diri selama pubertas, Aafif perlu lebih mendalami aspek desain dan penyampaian informasi. Strategi pengajaran yang dapat diterapkan adalah menggunakan media visual seperti komik atau video untuk membantu Aafif lebih memahami cara menyampaikan informasi dengan cara yang menarik dan informatif. Selain itu, untuk TP lainnya dengan nilai di atas 90, guru dapat memberikan tantangan pengayaan seperti proyek kreatif atau penelitian tambahan yang sesuai dengan gaya belajar visualnya.
+        - generic [ref=f28e154]:
+          - generic [ref=f28e155]:
+            - generic [ref=f28e156]:
+              - heading "Analisis Diagnostik Gaya Belajar Siswa (Modalitas VARK)" [level=3] [ref=f28e157]
+              - paragraph [ref=f28e158]: Pemetaan persentase modalitas belajar non-kognitif untuk dasar diferensiasi pembelajaran
+            - generic [ref=f28e159]: "Dominan: Visual"
+          - generic [ref=f28e160]:
+            - generic [ref=f28e161]:
+              - generic [ref=f28e162]:
+                - generic [ref=f28e163]:
+                  - generic [ref=f28e164]: Visual
+                  - generic [ref=f28e165]: Dominan
+                - generic [ref=f28e166]:
+                  - generic [ref=f28e167]: 45%
+                  - generic [ref=f28e168]: proporsi
+              - paragraph [ref=f28e171]: Optimal melalui peta konsep, diagram alur, skema visual, dan infografis terstruktur.
+            - generic [ref=f28e172]:
+              - generic [ref=f28e173]:
+                - generic [ref=f28e174]: Auditori
+                - generic [ref=f28e176]:
+                  - generic [ref=f28e177]: 25%
+                  - generic [ref=f28e178]: proporsi
+              - paragraph [ref=f28e181]: Optimal melalui penjelasan lisan, sesi tanya jawab, rekaman audio, dan diskusi kelompok.
+            - generic [ref=f28e182]:
+              - generic [ref=f28e183]:
+                - generic [ref=f28e184]: Kinestetik
+                - generic [ref=f28e186]:
+                  - generic [ref=f28e187]: 18%
+                  - generic [ref=f28e188]: proporsi
+              - paragraph [ref=f28e191]: Optimal melalui eksperimen konkret, simulasi praktis laboratorium, dan peraga nyata.
+            - generic [ref=f28e192]:
+              - generic [ref=f28e193]:
+                - generic [ref=f28e194]: Baca dan Tulis
+                - generic [ref=f28e196]:
+                  - generic [ref=f28e197]: 12%
+                  - generic [ref=f28e198]: proporsi
+              - paragraph [ref=f28e201]: Optimal melalui modul materi teks mendalam, penulisan rangkuman, dan glosarium istilah.
+        - generic [ref=f28e202]:
+          - generic [ref=f28e203]:
+            - generic [ref=f28e204]:
+              - generic [ref=f28e205]:
+                - heading "Rekomendasi Bahan Ajar & Modul Terarah" [level=3] [ref=f28e206]
+                - paragraph [ref=f28e207]: Rangkuman bahan ajar terarah per butir TP dan modalitas belajar
+              - generic [ref=f28e208]: Gaya Visual
+            - generic [ref=f28e209]: Pertahankan pemahaman pada Sistem Gerak dan Syaraf Manusia, Sistem Reproduksi & Pubertas, serta Ekosistem & Keanekaragaman Hayati. Perdalam materi tentang Struktur Sel & Mikroskopik Organisme dan Metabolisme & Enzim.
+          - generic [ref=f28e210]:
+            - generic [ref=f28e211]:
+              - heading "Strategi Aktivitas Pembelajaran Adaptif" [level=3] [ref=f28e212]
+              - paragraph [ref=f28e213]: Rangkuman analisis strategi aktivasi pembelajaran adaptif Kurikulum Merdeka
+            - generic [ref=f28e214]:
+              - generic [ref=f28e215]:
+                - generic [ref=f28e216]: "1"
+                - generic [ref=f28e217]: Membuat poster atau infografis tentang sistem gerak manusia untuk mendalami TP 1.4.
+              - generic [ref=f28e218]:
+                - generic [ref=f28e219]: "2"
+                - generic [ref=f28e220]: Mengembangkan komik edukasi mengenai pubertas untuk TP 2.4.
+              - generic [ref=f28e221]:
+                - generic [ref=f28e222]: "3"
+                - generic [ref=f28e223]: Menggunakan video animasi untuk menjelaskan interaksi dalam ekosistem untuk TP 4.1.
+        - generic [ref=f28e224]:
+          - generic [ref=f28e225]:
+            - generic [ref=f28e226]:
+              - heading "Riwayat Nilai per Tujuan Pembelajaran (TP)" [level=3] [ref=f28e227]
+              - paragraph [ref=f28e228]: Seluruh butir TP yang dinilai pada Kurikulum Merdeka beserta diagnostik rekomendasi AI
+            - generic [ref=f28e229]:
+              - button "Ringkaskan Tampilan" [ref=f28e230] [cursor=pointer]
+              - link "Edit Nilai Matriks" [ref=f28e234] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/penilaian/matrix
+          - table [ref=f28e236]:
+            - rowgroup [ref=f28e237]:
+              - row [ref=f28e238]:
+                - columnheader "Lingkup Materi" [ref=f28e239]
+                - columnheader "Kode TP" [ref=f28e240]
+                - columnheader "Deskripsi TP & Rekomendasi AI" [ref=f28e241]
+                - columnheader "Target KKM" [ref=f28e242]
+                - columnheader "Nilai" [ref=f28e243]
+                - columnheader "Status" [ref=f28e244]
+            - rowgroup [ref=f28e245]:
+              - row [ref=f28e246]:
+                - cell "Materi 1" [ref=f28e247]
+                - cell "TP 1.1" [ref=f28e248]
+                - cell "Mengidentifikasi organ utama penyusun sistem gerak manusia (tulang, sendi, otot, syaraf) melalui pengamatan torso, gambar, atau video tentang aktivitas dan sistem syaraf." [ref=f28e249]:
+                  - group [ref=f28e251]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e252] [cursor=pointer]':
+                      - generic [ref=f28e253]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e257]: 3 Rekomendasi
+                    - generic [ref=f28e261]:
+                      - generic [ref=f28e262]:
+                        - generic [ref=f28e263]: "1"
+                        - generic [ref=f28e264]: "Perlu dipertahankan: Kemampuan mengidentifikasi dan menjelaskan fungsi organ dengan cara visual."
+                      - generic [ref=f28e265]:
+                        - generic [ref=f28e266]: "2"
+                        - generic [ref=f28e267]: "Langkah Belajar Siswa: Cobalah membuat poster yang lebih detail tentang sistem gerak manusia untuk memperdalam pemahamanmu."
+                      - generic [ref=f28e268]:
+                        - generic [ref=f28e269]: "3"
+                        - generic [ref=f28e270]: "Rencana Tindak Lanjut Guru: Berikan Aafif kesempatan untuk mempresentasikan poster di depan kelas untuk memperkuat pemahamannya."
+                - cell "75.00" [ref=f28e271]
+                - cell "98.00" [ref=f28e272]
+                - cell "Tuntas" [ref=f28e273]
+              - row [ref=f28e275]:
+                - cell "Materi 1" [ref=f28e276]
+                - cell "TP 1.2" [ref=f28e277]
+                - cell "Menganalisis fungsi masing-masing komponen sistem gerak dan syaraf." [ref=f28e278]:
+                  - group [ref=f28e280]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e281] [cursor=pointer]':
+                      - generic [ref=f28e282]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e286]: 3 Rekomendasi
+                    - generic [ref=f28e290]:
+                      - generic [ref=f28e291]:
+                        - generic [ref=f28e292]: "1"
+                        - generic [ref=f28e293]: "Perlu dipertahankan: Analisis mendalam tentang fungsi sistem gerak dan syaraf."
+                      - generic [ref=f28e294]:
+                        - generic [ref=f28e295]: "2"
+                        - generic [ref=f28e296]: "Langkah Belajar Siswa: Cobalah untuk menjelaskan fungsi-fungsi ini kepada temanmu untuk memperkuat pemahaman."
+                      - generic [ref=f28e297]:
+                        - generic [ref=f28e298]: "3"
+                        - generic [ref=f28e299]: "Rencana Tindak Lanjut Guru: Dorong Aafif untuk membuat presentasi tentang fungsi sistem gerak dan syaraf."
+                - cell "75.00" [ref=f28e300]
+                - cell "99.00" [ref=f28e301]
+                - cell "Tuntas" [ref=f28e302]
+              - row [ref=f28e304]:
+                - cell "Materi 1" [ref=f28e305]
+                - cell "TP 1.3" [ref=f28e306]
+                - cell "Menghubungkan antara jenis makanan yang dikonsumsi (misalnya kalsium, protein) dan kebiasaan beraktivitas dengan frekuensi olahraga, pola makan dan mengidentifikasi potensi risiko yang dapat menyebabkan gangguan pada sistem gerak." [ref=f28e307]:
+                  - group [ref=f28e309]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e310] [cursor=pointer]':
+                      - generic [ref=f28e311]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e315]: 3 Rekomendasi
+                    - generic [ref=f28e319]:
+                      - generic [ref=f28e320]:
+                        - generic [ref=f28e321]: "1"
+                        - generic [ref=f28e322]: "Perlu dipertahankan: Keterkaitan antara pola makan dan kesehatan sistem gerak."
+                      - generic [ref=f28e323]:
+                        - generic [ref=f28e324]: "2"
+                        - generic [ref=f28e325]: "Langkah Belajar Siswa: Coba buat jurnal makanan dan aktivitas fisikmu untuk melihat pengaruhnya."
+                      - generic [ref=f28e326]:
+                        - generic [ref=f28e327]: "3"
+                        - generic [ref=f28e328]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk berbagi pengalamannya dalam menjaga pola makan sehat di kelas."
+                - cell "75.00" [ref=f28e329]
+                - cell "90.00" [ref=f28e330]
+                - cell "Tuntas" [ref=f28e331]
+              - row [ref=f28e333]:
+                - cell "Materi 1" [ref=f28e334]
+                - cell "TP 1.4" [ref=f28e335]
+                - cell "Menjaga kesehatan sistem organ gerak dengan membuat komitmen pribadi untuk menerapkan gaya hidup sehat dan poster infografis panduan menjaga tulang dan otot kuat." [ref=f28e336]:
+                  - group [ref=f28e338]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e339] [cursor=pointer]':
+                      - generic [ref=f28e340]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e344]: 3 Rekomendasi
+                    - generic [ref=f28e348]:
+                      - generic [ref=f28e349]:
+                        - generic [ref=f28e350]: "1"
+                        - generic [ref=f28e351]: "Perlu dipertahankan: Kemampuan untuk menyampaikan informasi dengan cara yang menarik."
+                      - generic [ref=f28e352]:
+                        - generic [ref=f28e353]: "2"
+                        - generic [ref=f28e354]: "Langkah Belajar Siswa: Cobalah untuk mendesain poster tentang olahraga yang baik untuk kesehatan tulang."
+                      - generic [ref=f28e355]:
+                        - generic [ref=f28e356]: "3"
+                        - generic [ref=f28e357]: "Rencana Tindak Lanjut Guru: Berikan Aafif kesempatan untuk mempresentasikan poster di kelas."
+                - cell "75.00" [ref=f28e358]
+                - cell "99.00" [ref=f28e359]
+                - cell "Tuntas" [ref=f28e360]
+              - row [ref=f28e362]:
+                - cell "Materi 2" [ref=f28e363]
+                - cell "TP 2.1" [ref=f28e364]
+                - cell "Menganalisis perubahan fisik primer dan sekunder yang dialami laki-laki (misalnya mimpi basah) dan perempuan (misalnya menstruasi) selama masa pubertas." [ref=f28e365]:
+                  - group [ref=f28e367]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e368] [cursor=pointer]':
+                      - generic [ref=f28e369]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e373]: 3 Rekomendasi
+                    - generic [ref=f28e377]:
+                      - generic [ref=f28e378]:
+                        - generic [ref=f28e379]: "1"
+                        - generic [ref=f28e380]: "Perlu dipertahankan: Pemahaman tentang perubahan fisik dan dampaknya."
+                      - generic [ref=f28e381]:
+                        - generic [ref=f28e382]: "2"
+                        - generic [ref=f28e383]: "Langkah Belajar Siswa: Cobalah untuk mendiskusikan perubahan ini dengan teman-temanmu."
+                      - generic [ref=f28e384]:
+                        - generic [ref=f28e385]: "3"
+                        - generic [ref=f28e386]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk memimpin diskusi tentang perubahan fisik di kelas."
+                - cell "75.00" [ref=f28e387]
+                - cell "90.00" [ref=f28e388]
+                - cell "Tuntas" [ref=f28e389]
+              - row [ref=f28e391]:
+                - cell "Materi 2" [ref=f28e392]
+                - cell "TP 2.2" [ref=f28e393]
+                - cell "Menjelaskan cara menjaga kebersihan organ reproduksi dengan benar dan nutrisi yang penting untuk mendukung kesehatan selama masa pubertas." [ref=f28e394]:
+                  - group [ref=f28e396]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e397] [cursor=pointer]':
+                      - generic [ref=f28e398]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e402]: 3 Rekomendasi
+                    - generic [ref=f28e406]:
+                      - generic [ref=f28e407]:
+                        - generic [ref=f28e408]: "1"
+                        - generic [ref=f28e409]: "Perlu dipertahankan: Pengetahuan tentang kebersihan dan nutrisi selama pubertas."
+                      - generic [ref=f28e410]:
+                        - generic [ref=f28e411]: "2"
+                        - generic [ref=f28e412]: "Langkah Belajar Siswa: Cobalah untuk membuat panduan kebersihan untuk teman-temanmu."
+                      - generic [ref=f28e413]:
+                        - generic [ref=f28e414]: "3"
+                        - generic [ref=f28e415]: "Rencana Tindak Lanjut Guru: Dorong Aafif untuk berbagi panduan kebersihan di kelas."
+                - cell "75.00" [ref=f28e416]
+                - cell "99.00" [ref=f28e417]
+                - cell "Tuntas" [ref=f28e418]
+              - row [ref=f28e420]:
+                - cell "Materi 2" [ref=f28e421]
+                - cell "TP 2.3" [ref=f28e422]
+                - cell "Mengklasifikasikan mitos yang tidak perlu dipercaya dan fakta ilmiah yang perlu dipahami terkait pubertas dan kesehatan reproduksi." [ref=f28e423]:
+                  - group [ref=f28e425]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e426] [cursor=pointer]':
+                      - generic [ref=f28e427]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e431]: 3 Rekomendasi
+                    - generic [ref=f28e435]:
+                      - generic [ref=f28e436]:
+                        - generic [ref=f28e437]: "1"
+                        - generic [ref=f28e438]: "Perlu dipertahankan: Kemampuan untuk membedakan antara mitos dan fakta."
+                      - generic [ref=f28e439]:
+                        - generic [ref=f28e440]: "2"
+                        - generic [ref=f28e441]: "Langkah Belajar Siswa: Cobalah untuk membuat poster tentang mitos dan fakta pubertas."
+                      - generic [ref=f28e442]:
+                        - generic [ref=f28e443]: "3"
+                        - generic [ref=f28e444]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan poster di kelas."
+                - cell "75.00" [ref=f28e445]
+                - cell "90.00" [ref=f28e446]
+                - cell "Tuntas" [ref=f28e447]
+              - row [ref=f28e449]:
+                - cell "Materi 2" [ref=f28e450]
+                - cell "TP 2.4" [ref=f28e451]
+                - cell "Mengembangkan sikap positif dan penerimaan diri mengenai perubahan masa pubertas dengan merancang buklet informasi atau komik edukasi." [ref=f28e452]:
+                  - group [ref=f28e454]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e455] [cursor=pointer]':
+                      - generic [ref=f28e456]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e460]: 3 Rekomendasi
+                    - generic [ref=f28e464]:
+                      - generic [ref=f28e465]:
+                        - generic [ref=f28e466]: "1"
+                        - generic [ref=f28e467]: "Perlu ditingkatkan: Keterampilan dalam merancang materi edukasi yang lebih menarik."
+                      - generic [ref=f28e468]:
+                        - generic [ref=f28e469]: "2"
+                        - generic [ref=f28e470]: "Langkah Belajar Siswa: Cobalah untuk mendesain ulang buklet tersebut dengan elemen visual yang lebih menarik."
+                      - generic [ref=f28e471]:
+                        - generic [ref=f28e472]: "3"
+                        - generic [ref=f28e473]: "Rencana Tindak Lanjut Guru: Bantu Aafif dengan memberikan contoh buklet yang menarik untuk inspirasi."
+                - cell "75.00" [ref=f28e474]
+                - cell "87.00" [ref=f28e475]
+                - cell "Tuntas" [ref=f28e476]
+              - row [ref=f28e478]:
+                - cell "Materi 3" [ref=f28e479]
+                - cell "TP 3.1" [ref=f28e480]
+                - cell "Mengidentifikasi organ peredaran darah manusia (jantung, pembuluh darah, dan darah) serta fungsinya masing-masing melalui pengamatan model torso dan video." [ref=f28e481]:
+                  - group [ref=f28e483]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e484] [cursor=pointer]':
+                      - generic [ref=f28e485]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e489]: 3 Rekomendasi
+                    - generic [ref=f28e493]:
+                      - generic [ref=f28e494]:
+                        - generic [ref=f28e495]: "1"
+                        - generic [ref=f28e496]: "Perlu ditingkatkan: Pemahaman tentang fungsi masing-masing organ peredaran darah."
+                      - generic [ref=f28e497]:
+                        - generic [ref=f28e498]: "2"
+                        - generic [ref=f28e499]: "Langkah Belajar Siswa: Cobalah untuk menggambar diagram sistem peredaran darah dan menjelaskan fungsinya."
+                      - generic [ref=f28e500]:
+                        - generic [ref=f28e501]: "3"
+                        - generic [ref=f28e502]: "Rencana Tindak Lanjut Guru: Berikan latihan tambahan tentang fungsi organ peredaran darah dengan menggunakan diagram."
+                - cell "75.00" [ref=f28e503]
+                - cell "78.00" [ref=f28e504]
+                - cell "Tuntas" [ref=f28e505]
+              - row [ref=f28e507]:
+                - cell "Materi 3" [ref=f28e508]
+                - cell "TP 3.2" [ref=f28e509]
+                - cell "Menjelaskan gangguan pada sistem peredaran darah, seperti anemia, hipertensi, dan penyakit jantung, serta cara pencegahannya." [ref=f28e510]:
+                  - group [ref=f28e512]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e513] [cursor=pointer]':
+                      - generic [ref=f28e514]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e518]: 3 Rekomendasi
+                    - generic [ref=f28e522]:
+                      - generic [ref=f28e523]:
+                        - generic [ref=f28e524]: "1"
+                        - generic [ref=f28e525]: "Perlu dipertahankan: Pemahaman tentang pencegahan gangguan peredaran darah."
+                      - generic [ref=f28e526]:
+                        - generic [ref=f28e527]: "2"
+                        - generic [ref=f28e528]: "Langkah Belajar Siswa: Cobalah untuk membuat poster tentang cara mencegah gangguan peredaran darah."
+                      - generic [ref=f28e529]:
+                        - generic [ref=f28e530]: "3"
+                        - generic [ref=f28e531]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan poster di kelas."
+                - cell "75.00" [ref=f28e532]
+                - cell "92.00" [ref=f28e533]
+                - cell "Tuntas" [ref=f28e534]
+              - row [ref=f28e536]:
+                - cell "Materi 3" [ref=f28e537]
+                - cell "TP 3.3" [ref=f28e538]
+                - cell "Mengukur frekuensi denyut nadi sendiri saat istirahat (sebelum aktivitas) dan setelah melakukan aktivitas fisik ringan." [ref=f28e539]:
+                  - group [ref=f28e541]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e542] [cursor=pointer]':
+                      - generic [ref=f28e543]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e547]: 3 Rekomendasi
+                    - generic [ref=f28e551]:
+                      - generic [ref=f28e552]:
+                        - generic [ref=f28e553]: "1"
+                        - generic [ref=f28e554]: "Perlu ditingkatkan: Kemampuan dalam melakukan pengukuran denyut nadi secara konsisten."
+                      - generic [ref=f28e555]:
+                        - generic [ref=f28e556]: "2"
+                        - generic [ref=f28e557]: "Langkah Belajar Siswa: Cobalah untuk mengukur denyut nadimu di berbagai waktu untuk melihat perbedaannya."
+                      - generic [ref=f28e558]:
+                        - generic [ref=f28e559]: "3"
+                        - generic [ref=f28e560]: "Rencana Tindak Lanjut Guru: Berikan kesempatan bagi Aafif untuk melakukan pengukuran denyut nadi di kelas."
+                - cell "75.00" [ref=f28e561]
+                - cell "88.00" [ref=f28e562]
+                - cell "Tuntas" [ref=f28e563]
+              - row [ref=f28e565]:
+                - cell "Materi 4" [ref=f28e566]
+                - cell "TP 4.1" [ref=f28e567]
+                - cell "Menganalisis interaksi antar komponen biotik dan abiotik dalam suatu ekosistem." [ref=f28e568]:
+                  - group [ref=f28e570]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e571] [cursor=pointer]':
+                      - generic [ref=f28e572]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e576]: 3 Rekomendasi
+                    - generic [ref=f28e580]:
+                      - generic [ref=f28e581]:
+                        - generic [ref=f28e582]: "1"
+                        - generic [ref=f28e583]: "Perlu dipertahankan: Kemampuan analisis interaksi dalam ekosistem."
+                      - generic [ref=f28e584]:
+                        - generic [ref=f28e585]: "2"
+                        - generic [ref=f28e586]: "Langkah Belajar Siswa: Cobalah untuk membuat proyek tentang ekosistem lokal di sekitarmu."
+                      - generic [ref=f28e587]:
+                        - generic [ref=f28e588]: "3"
+                        - generic [ref=f28e589]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan proyek tentang ekosistem di kelas."
+                - cell "75.00" [ref=f28e590]
+                - cell "95.00" [ref=f28e591]
+                - cell "Tuntas" [ref=f28e592]
+              - row [ref=f28e594]:
+                - cell "Materi 4" [ref=f28e595]
+                - cell "TP 4.2" [ref=f28e596]
+                - cell "Menyajikan solusi atas ancaman kepunahan keanekaragaman hayati lokal di lingkungan sekitar." [ref=f28e597]:
+                  - group [ref=f28e599]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e600] [cursor=pointer]':
+                      - generic [ref=f28e601]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e605]: 3 Rekomendasi
+                    - generic [ref=f28e609]:
+                      - generic [ref=f28e610]:
+                        - generic [ref=f28e611]: "1"
+                        - generic [ref=f28e612]: "Perlu dipertahankan: Kemampuan untuk menyajikan solusi yang kreatif."
+                      - generic [ref=f28e613]:
+                        - generic [ref=f28e614]: "2"
+                        - generic [ref=f28e615]: "Langkah Belajar Siswa: Cobalah untuk menulis artikel tentang keanekaragaman hayati untuk dibagikan."
+                      - generic [ref=f28e616]:
+                        - generic [ref=f28e617]: "3"
+                        - generic [ref=f28e618]: "Rencana Tindak Lanjut Guru: Dorong Aafif untuk mempresentasikan solusinya di depan kelas."
+                - cell "75.00" [ref=f28e619]
+                - cell "90.00" [ref=f28e620]
+                - cell "Tuntas" [ref=f28e621]
+              - row [ref=f28e623]:
+                - cell "Materi 5" [ref=f28e624]
+                - cell "TP 5.1" [ref=f28e625]
+                - cell "Mengamati struktur sel tumbuhan dan sel hewan menggunakan mikroskop optik atau simulasi digital." [ref=f28e626]:
+                  - group [ref=f28e628]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e629] [cursor=pointer]':
+                      - generic [ref=f28e630]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e634]: 3 Rekomendasi
+                    - generic [ref=f28e638]:
+                      - generic [ref=f28e639]:
+                        - generic [ref=f28e640]: "1"
+                        - generic [ref=f28e641]: "Perlu ditingkatkan: Detail dalam pengamatan struktur sel."
+                      - generic [ref=f28e642]:
+                        - generic [ref=f28e643]: "2"
+                        - generic [ref=f28e644]: "Langkah Belajar Siswa: Cobalah untuk menggambar struktur sel dan menandai bagian-bagiannya."
+                      - generic [ref=f28e645]:
+                        - generic [ref=f28e646]: "3"
+                        - generic [ref=f28e647]: "Rencana Tindak Lanjut Guru: Berikan latihan tambahan tentang pengamatan struktur sel dengan mikroskop."
+                - cell "75.00" [ref=f28e648]
+                - cell "88.00" [ref=f28e649]
+                - cell "Tuntas" [ref=f28e650]
+              - row [ref=f28e652]:
+                - cell "Materi 5" [ref=f28e653]
+                - cell "TP 5.2" [ref=f28e654]
+                - cell "Membedakan fungsi organel-organel utama sel (nukleus, mitokondria, kloroplas)." [ref=f28e655]:
+                  - group [ref=f28e657]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e658] [cursor=pointer]':
+                      - generic [ref=f28e659]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e663]: 3 Rekomendasi
+                    - generic [ref=f28e667]:
+                      - generic [ref=f28e668]:
+                        - generic [ref=f28e669]: "1"
+                        - generic [ref=f28e670]: "Perlu dipertahankan: Kemampuan untuk membedakan fungsi organel."
+                      - generic [ref=f28e671]:
+                        - generic [ref=f28e672]: "2"
+                        - generic [ref=f28e673]: "Langkah Belajar Siswa: Cobalah untuk menjelaskan fungsi organel kepada temanmu."
+                      - generic [ref=f28e674]:
+                        - generic [ref=f28e675]: "3"
+                        - generic [ref=f28e676]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan fungsinya di kelas."
+                - cell "75.00" [ref=f28e677]
+                - cell "94.00" [ref=f28e678]
+                - cell "Tuntas" [ref=f28e679]
+              - row [ref=f28e681]:
+                - cell "Materi 6" [ref=f28e682]
+                - cell "TP 6.1" [ref=f28e683]
+                - cell "Menjelaskan peran enzim sebagai biokatalisator dalam reaksi metabolisme tubuh." [ref=f28e684]:
+                  - group [ref=f28e686]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e687] [cursor=pointer]':
+                      - generic [ref=f28e688]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e692]: 3 Rekomendasi
+                    - generic [ref=f28e696]:
+                      - generic [ref=f28e697]:
+                        - generic [ref=f28e698]: "1"
+                        - generic [ref=f28e699]: "Perlu dipertahankan: Pemahaman tentang fungsi enzim."
+                      - generic [ref=f28e700]:
+                        - generic [ref=f28e701]: "2"
+                        - generic [ref=f28e702]: "Langkah Belajar Siswa: Cobalah untuk menulis esai tentang enzim dan perannya dalam metabolisme."
+                      - generic [ref=f28e703]:
+                        - generic [ref=f28e704]: "3"
+                        - generic [ref=f28e705]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan esai di depan kelas."
+                - cell "75.00" [ref=f28e706]
+                - cell "90.00" [ref=f28e707]
+                - cell "Tuntas" [ref=f28e708]
+              - row [ref=f28e710]:
+                - cell "Materi 7" [ref=f28e711]
+                - cell "TP 7.1" [ref=f28e712]
+                - cell "Menganalisis hukum pewarisan sifat Mendel pada persilangan monohibrid dan dihibrid." [ref=f28e713]:
+                  - group [ref=f28e715]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e716] [cursor=pointer]':
+                      - generic [ref=f28e717]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e721]: 3 Rekomendasi
+                    - generic [ref=f28e725]:
+                      - generic [ref=f28e726]:
+                        - generic [ref=f28e727]: "1"
+                        - generic [ref=f28e728]: "Perlu ditingkatkan: Detail dalam analisis hukum pewarisan sifat."
+                      - generic [ref=f28e729]:
+                        - generic [ref=f28e730]: "2"
+                        - generic [ref=f28e731]: "Langkah Belajar Siswa: Cobalah untuk membuat diagram pewarisan sifat untuk memperjelas pemahamanmu."
+                      - generic [ref=f28e732]:
+                        - generic [ref=f28e733]: "3"
+                        - generic [ref=f28e734]: "Rencana Tindak Lanjut Guru: Berikan latihan tambahan tentang analisis hukum pewarisan sifat."
+                - cell "75.00" [ref=f28e735]
+                - cell "88.00" [ref=f28e736]
+                - cell "Tuntas" [ref=f28e737]
+              - row [ref=f28e739]:
+                - cell "Materi 8" [ref=f28e740]
+                - cell "TP 8.1" [ref=f28e741]
+                - cell "Menerapkan prinsip bioteknologi konvensional dalam fermentasi makanan tradisional." [ref=f28e742]:
+                  - group [ref=f28e744]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e745] [cursor=pointer]':
+                      - generic [ref=f28e746]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e750]: 3 Rekomendasi
+                    - generic [ref=f28e754]:
+                      - generic [ref=f28e755]:
+                        - generic [ref=f28e756]: "1"
+                        - generic [ref=f28e757]: "Perlu dipertahankan: Pemahaman tentang aplikasi bioteknologi."
+                      - generic [ref=f28e758]:
+                        - generic [ref=f28e759]: "2"
+                        - generic [ref=f28e760]: "Langkah Belajar Siswa: Cobalah untuk melakukan eksperimen kecil tentang fermentasi di rumah."
+                      - generic [ref=f28e761]:
+                        - generic [ref=f28e762]: "3"
+                        - generic [ref=f28e763]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan eksperimen di depan kelas."
+                - cell "75.00" [ref=f28e764]
+                - cell "92.00" [ref=f28e765]
+                - cell "Tuntas" [ref=f28e766]
+              - row [ref=f28e768]:
+                - cell "Materi 9" [ref=f28e769]
+                - cell "TP 9.1" [ref=f28e770]
+                - cell "Menganalisis data peningkatan suhu bumi dan emisi gas rumah kaca serta merancang aksi konservasi." [ref=f28e771]:
+                  - group [ref=f28e773]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e774] [cursor=pointer]':
+                      - generic [ref=f28e775]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e779]: 3 Rekomendasi
+                    - generic [ref=f28e783]:
+                      - generic [ref=f28e784]:
+                        - generic [ref=f28e785]: "1"
+                        - generic [ref=f28e786]: "Perlu dipertahankan: Kemampuan untuk menganalisis data lingkungan."
+                      - generic [ref=f28e787]:
+                        - generic [ref=f28e788]: "2"
+                        - generic [ref=f28e789]: "Langkah Belajar Siswa: Cobalah untuk menulis artikel tentang pemanasan global untuk dibagikan."
+                      - generic [ref=f28e790]:
+                        - generic [ref=f28e791]: "3"
+                        - generic [ref=f28e792]: "Rencana Tindak Lanjut Guru: Dorong Aafif untuk mempresentasikan artikelnya di kelas."
+                - cell "75.00" [ref=f28e793]
+                - cell "90.00" [ref=f28e794]
+                - cell "Tuntas" [ref=f28e795]
+              - row [ref=f28e797]:
+                - cell "Materi 10" [ref=f28e798]
+                - cell "TP 10.1" [ref=f28e799]
+                - cell "Mengidentifikasi bahaya zat adiktif bagi sistem saraf dan merancang kampanye anti-narkoba di kalangan remaja." [ref=f28e800]:
+                  - group [ref=f28e802]:
+                    - 'generic "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual): 3 Rekomendasi" [ref=f28e803] [cursor=pointer]':
+                      - generic [ref=f28e804]: "Rekomendasi AI (3 Rekomendasi Tindak Lanjut Pengayaan • Gaya Visual):"
+                      - generic [ref=f28e808]: 3 Rekomendasi
+                    - generic [ref=f28e812]:
+                      - generic [ref=f28e813]:
+                        - generic [ref=f28e814]: "1"
+                        - generic [ref=f28e815]: "Perlu dipertahankan: Pengetahuan tentang bahaya zat adiktif."
+                      - generic [ref=f28e816]:
+                        - generic [ref=f28e817]: "2"
+                        - generic [ref=f28e818]: "Langkah Belajar Siswa: Cobalah untuk membuat kampanye anti-narkoba di sekolah."
+                      - generic [ref=f28e819]:
+                        - generic [ref=f28e820]: "3"
+                        - generic [ref=f28e821]: "Rencana Tindak Lanjut Guru: Ajak Aafif untuk mempresentasikan kampanyenya di depan kelas."
+                - cell "75.00" [ref=f28e822]
+                - cell "95.00" [ref=f28e823]
+                - cell "Tuntas" [ref=f28e824]
+        - generic [ref=f28e826]:
+          - generic [ref=f28e827]:
+            - generic [ref=f28e828]:
+              - heading "Catatan Diagnostik & Rencana Intervensi Guru" [level=3] [ref=f28e829]
+              - paragraph [ref=f28e830]: Guru dapat menyesuaikan atau menambahkan catatan rekomendasi AI di atas sebelum disimpan
+            - generic [ref=f28e831]: Dapat Diedit Guru
+          - generic [ref=f28e832]:
+            - generic [ref=f28e833]:
+              - generic [ref=f28e834] [cursor=pointer]: "Catatan Bimbingan atau Rekomendasi Tindak Lanjut Guru:"
+              - textbox "Catatan Bimbingan atau Rekomendasi Tindak Lanjut Guru:" [ref=f28e835]:
+                - /placeholder: Tuliskan arahan bimbingan akademik, penugasan remedial per TP, atau materi pengayaan...
+                - text: "Rekomendasi Guru (AI): Aafif menunjukkan performa yang sangat baik dengan rata-rata nilai 91.6. Ia telah menguasai dengan sangat baik topik-topik seperti Sistem Gerak dan Syaraf Manusia serta Sistem Reproduksi dan Pubertas, yang tercermin dari nilai tinggi di sebagian besar TP. Namun, ada beberapa TP yang menunjukkan nilai di bawah 90, seperti TP 2.4, di mana Aafif memperoleh nilai 87, yang menunjukkan bahwa ada ruang untuk penguatan lebih lanjut dalam memahami cara merancang materi edukasi yang efektif. Untuk TP 2.4, yang berfokus pada penerimaan diri selama pubertas, Aafif perlu lebih mendalami aspek desain dan penyampaian informasi. Strategi pengajaran yang dapat diterapkan adalah menggunakan media visual seperti komik atau video untuk membantu Aafif lebih memahami cara menyampaikan informasi dengan cara yang menarik dan informatif. Selain itu, untuk TP lainnya dengan nilai di atas 90, guru dapat memberikan tantangan pengayaan seperti proyek kreatif atau penelitian tambahan yang sesuai dengan gaya belajar visualnya."
+              - paragraph [ref=f28e836]:
+                - generic [ref=f28e839]:
+                  - text: Catatan ini otomatis terisi dari rekomendasi AI. Jika Anda mengubahnya dan klik
+                  - strong [ref=f28e840]: Simpan Catatan Guru
+                  - text: ", perubahan akan langsung diperbarui pada kartu"
+                  - strong [ref=f28e841]: Ulasan Evaluasi & Rekomendasi Guru
+                  - text: di atas.
+            - button "Simpan Catatan Guru" [ref=f28e843] [cursor=pointer]

@@ -58,7 +58,7 @@ class Personalisasi extends Model
         $sumber = $this->sumber_analisis ?? 'Fallback Heuristik';
         return match ($sumber) {
             'Gemini' => [
-                'nama' => 'Google Gemini (AI Cloud)',
+                'nama' => 'Google Gemini',
                 'tipe' => 'gemini',
                 'bg' => 'bg-teal-50 text-teal-800 border-teal-200',
                 'badge_header' => 'bg-teal-100 text-teal-900 border-teal-300',
@@ -66,15 +66,29 @@ class Personalisasi extends Model
                 'model' => 'gemini-3.5-flash',
             ],
             'OpenAI' => [
-                'nama' => 'OpenAI GPT (AI Cloud)',
+                'nama' => 'OpenAI GPT',
                 'tipe' => 'openai',
                 'bg' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
                 'badge_header' => 'bg-emerald-100 text-emerald-900 border-emerald-300',
                 'dot' => 'bg-emerald-500',
                 'model' => 'gpt-4o-mini',
             ],
+            'Router9' => [
+                'nama' => str_contains(strtolower($this->keterangan_sumber ?? ''), 'claude')
+                    ? 'Router9 Claude'
+                    : (str_contains(strtolower($this->keterangan_sumber ?? ''), 'gpt')
+                        ? 'Router9 GPT'
+                        : 'Router9 Gemini'),
+                'tipe' => 'router9',
+                'bg' => 'bg-indigo-50 text-indigo-800 border-indigo-200',
+                'badge_header' => 'bg-indigo-100 text-indigo-900 border-indigo-300',
+                'dot' => 'bg-indigo-500',
+                'model' => preg_match('/(?:Model:|Router9:|Gateway:)\s*([^\s,)]+)/i', $this->keterangan_sumber ?? '', $matches)
+                    ? trim($matches[1])
+                    : \App\Models\Setting::get('router9_model', config('services.router9.model', 'ag/gemini-2.5-flash')),
+            ],
             default => [
-                'nama' => 'Fallback Heuristik (Aturan Pedagogi Internal)',
+                'nama' => 'Fallback Heuristik',
                 'tipe' => 'fallback',
                 'bg' => 'bg-amber-50 text-amber-900 border-amber-200',
                 'badge_header' => 'bg-amber-100 text-amber-900 border-amber-300',

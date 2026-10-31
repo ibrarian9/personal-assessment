@@ -45,8 +45,53 @@ return [
         'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
     ],
 
+    'router9' => [
+        'api_key' => env('ROUTER9_API_KEY'),
+        'base_url' => env('ROUTER9_BASE_URL', 'https://api.router9.com/v1'),
+        'model' => env('ROUTER9_MODEL', 'ag/gemini-2.5-flash'),
+        'available_models' => [
+            'Rekomendasi Utama' => [
+                'ag/gemini-2.5-flash' => 'Gemini 2.5 Flash',
+            ],
+            'Gemini 3.8 Series' => [
+                'ag/gemini-3.8-flash' => 'Gemini 3.8 Flash',
+                'ag/gemini-3.8-flash-high' => 'Gemini 3.8 Flash High',
+                'ag/gemini-3.8-flash-medium' => 'Gemini 3.8 Flash Medium',
+                'ag/gemini-3.8-flash-low' => 'Gemini 3.8 Flash Low',
+            ],
+            'Gemini 3.7 Series' => [
+                'ag/gemini-3.7-flash-high' => 'Gemini 3.7 Flash High',
+                'ag/gemini-3.7-flash-medium' => 'Gemini 3.7 Flash Medium',
+                'ag/gemini-3.7-flash-low' => 'Gemini 3.7 Flash Low',
+            ],
+            'Gemini 3.6 Series' => [
+                'ag/gemini-3.6-flash-high' => 'Gemini 3.6 Flash High',
+                'ag/gemini-3.6-flash-medium' => 'Gemini 3.6 Flash Medium',
+                'ag/gemini-3.6-flash-low' => 'Gemini 3.6 Flash Low',
+            ],
+            'Gemini 3.5 & Flash Agent' => [
+                'ag/gemini-3.5-flash-high' => 'Gemini 3.5 Flash High',
+                'ag/gemini-3.5-flash-low' => 'Gemini 3.5 Flash Low',
+                'ag/gemini-3.5-flash-extra-low' => 'Gemini 3.5 Flash Extra Low',
+                'ag/gemini-3-flash' => 'Gemini 3 Flash',
+                'ag/gemini-3-flash-agent' => 'Gemini 3.5 Flash Agent High',
+            ],
+            'Gemini Pro' => [
+                'ag/gemini-pro-agent' => 'Gemini 3.1 Pro Agent',
+                'ag/gemini-3.1-pro-low' => 'Gemini 3.1 Pro Low',
+            ],
+            'Anthropic Claude' => [
+                'ag/claude-sonnet-4-6' => 'Claude Sonnet 4.6',
+                'ag/claude-opus-4-6-thinking' => 'Claude Opus 4.6 Thinking',
+            ],
+            'Open Source & GPT' => [
+                'ag/gpt-oss-120b-medium' => 'GPT-OSS 120B Medium',
+            ],
+        ],
+    ],
+
     'ai' => [
-        'provider' => env('AI_PROVIDER', 'gemini'), // 'gemini', 'openai', 'fallback'
+        'provider' => env('AI_PROVIDER', 'gemini'), // 'gemini', 'openai', 'router9', 'fallback'
     ],
 
 ];

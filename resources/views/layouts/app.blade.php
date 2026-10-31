@@ -250,9 +250,241 @@
         </div>
     </div>
 
-    <!-- Script to Auto-Trigger MicroModal for Server Flash Messages -->
+    <!-- Honest, Responsive AI Loading Overlay (Mencapai 100% Tuntas) -->
+    <div id="ai-fullscreen-overlay" class="fixed inset-0 z-[99999] bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 select-none" role="alertdialog" aria-modal="true" aria-labelledby="ai-overlay-title">
+        <div class="w-full max-w-sm rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-slate-200/90 text-center space-y-4">
+            <!-- Dynamic Icon Container -->
+            <div id="ai-overlay-icon-container" class="flex justify-center">
+                <svg id="ai-overlay-spinner" class="animate-spin h-10 w-10 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                    <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div id="ai-overlay-success-icon" class="hidden h-11 w-11 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center border border-emerald-200 shadow-2xs">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <h3 id="ai-overlay-title" class="text-sm font-bold text-slate-900">
+                    Menganalisis dengan AI...
+                </h3>
+                <div class="text-3xl font-extrabold font-mono text-teal-800 tracking-tight transition-colors duration-300" id="ai-overlay-percent">
+                    0%
+                </div>
+                <p id="ai-overlay-stage" class="text-xs text-slate-500 font-medium min-h-[1.25rem] leading-relaxed transition-all">
+                    Menghubungkan ke gateway AI...
+                </p>
+            </div>
+
+            <!-- Slim Progress Bar -->
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/80">
+                <div id="ai-overlay-bar" class="h-full rounded-full bg-teal-600 transition-all duration-300 ease-out" style="width: 0%;"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono px-1">
+                <span id="ai-overlay-step-label">Langkah 1 dari 4</span>
+                <span id="ai-overlay-timer">0s</span>
+            </div>
+
+            <!-- Recovery Button if timeout (> 65s) -->
+            <div id="ai-overlay-timeout-notice" class="hidden flex-col items-center gap-1.5 pt-2 border-t border-slate-100 text-xs text-slate-500">
+                <span>Memerlukan waktu lebih lama...</span>
+                <button type="button" onclick="window.location.reload();" class="text-xs text-teal-700 hover:text-teal-900 font-semibold underline">
+                    Muat Ulang Halaman
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to Auto-Trigger MicroModal for Server Flash Messages & AI Fullscreen Overlay -->
     <script>
+        window.submitWithAiLoading = function(event, form, title = 'Menganalisis dengan AI...', subtitle = '') {
+            if (event) event.preventDefault();
+            const overlay = document.getElementById('ai-fullscreen-overlay');
+            if (!overlay || !form) {
+                if (form) form.submit();
+                return;
+            }
+
+            const tEl = document.getElementById('ai-overlay-title');
+            const stageEl = document.getElementById('ai-overlay-stage');
+            const stepLabel = document.getElementById('ai-overlay-step-label');
+            const bar = document.getElementById('ai-overlay-bar');
+            const percentEl = document.getElementById('ai-overlay-percent');
+            const timerEl = document.getElementById('ai-overlay-timer');
+            const spinner = document.getElementById('ai-overlay-spinner');
+            const successIcon = document.getElementById('ai-overlay-success-icon');
+            const timeoutNotice = document.getElementById('ai-overlay-timeout-notice');
+
+            if (tEl && title) tEl.textContent = title;
+            if (spinner) spinner.classList.remove('hidden');
+            if (successIcon) {
+                successIcon.classList.add('hidden');
+                successIcon.classList.remove('flex');
+            }
+            if (bar) {
+                bar.classList.remove('bg-emerald-600');
+                bar.classList.add('bg-teal-600');
+                bar.style.width = '3%';
+            }
+            if (percentEl) {
+                percentEl.classList.remove('text-emerald-700');
+                percentEl.classList.add('text-teal-800');
+                percentEl.textContent = '3%';
+            }
+            if (timeoutNotice) {
+                timeoutNotice.classList.add('hidden');
+                timeoutNotice.classList.remove('flex');
+            }
+
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+
+            let seconds = 0;
+            let progress = 3;
+            let isCompleted = false;
+
+            const stages = [
+                { time: 0, text: 'Menghubungkan ke gateway AI...', step: 'Langkah 1 dari 4', targetProgress: 18 },
+                { time: 2, text: 'Mengevaluasi capaian Tujuan Pembelajaran...', step: 'Langkah 2 dari 4', targetProgress: 45 },
+                { time: 6, text: 'Menganalisis indikator dan modalitas belajar...', step: 'Langkah 3 dari 4', targetProgress: 75 },
+                { time: 10, text: 'Menyusun rekomendasi diferensiasi dan catatan guru...', step: 'Langkah 4 dari 4', targetProgress: 92 },
+                { time: 14, text: 'Menyelesaikan analisis dan menyimpan ke database...', step: 'Langkah 4 dari 4', targetProgress: 96 },
+            ];
+
+            function updateDisplay(p, text, step) {
+                const rounded = Math.min(100, Math.max(0, Math.round(p)));
+                if (bar) bar.style.width = rounded + '%';
+                if (percentEl) percentEl.textContent = rounded + '%';
+                if (stageEl && text) stageEl.textContent = text;
+                if (stepLabel && step) stepLabel.textContent = step;
+            }
+
+            updateDisplay(progress, stages[0].text, stages[0].step);
+
+            const intervalId = setInterval(() => {
+                if (isCompleted) return;
+                seconds++;
+                if (timerEl) timerEl.textContent = seconds + 's';
+
+                let currentStage = stages[0];
+                for (let i = stages.length - 1; i >= 0; i--) {
+                    if (seconds >= stages[i].time) {
+                        currentStage = stages[i];
+                        break;
+                    }
+                }
+
+                if (progress < currentStage.targetProgress) {
+                    progress += (currentStage.targetProgress - progress) * 0.4 + 0.5;
+                } else if (progress < 96) {
+                    progress += 0.2;
+                }
+
+                if (progress > 96) progress = 96;
+                updateDisplay(progress, currentStage.text, currentStage.step);
+
+                if (seconds >= 65 && timeoutNotice) {
+                    timeoutNotice.classList.remove('hidden');
+                    timeoutNotice.classList.add('flex');
+                }
+            }, 1000);
+
+            // Kirim request form via fetch AJAX
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(async (response) => {
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.message || `Gagal memproses data: HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                isCompleted = true;
+                clearInterval(intervalId);
+
+                // Tuntaskan 100% secara jujur
+                updateDisplay(100, 'Analisis selesai 100%! Memuat halaman hasil...', 'Selesai 100%');
+                if (bar) {
+                    bar.style.width = '100%';
+                    bar.classList.remove('bg-teal-600');
+                    bar.classList.add('bg-emerald-600');
+                }
+                if (percentEl) {
+                    percentEl.textContent = '100%';
+                    percentEl.classList.remove('text-teal-800');
+                    percentEl.classList.add('text-emerald-700');
+                }
+                if (spinner) spinner.classList.add('hidden');
+                if (successIcon) {
+                    successIcon.classList.remove('hidden');
+                    successIcon.classList.add('flex');
+                }
+
+                if (data.message) {
+                    sessionStorage.setItem('ai_flash_success', data.message);
+                }
+
+                setTimeout(() => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        window.location.reload();
+                    }
+                }, 650);
+            })
+            .catch((err) => {
+                isCompleted = true;
+                clearInterval(intervalId);
+                if (stageEl) {
+                    stageEl.textContent = err.message || 'Terjadi kesalahan saat memproses data.';
+                    stageEl.className = 'text-xs text-rose-600 font-semibold';
+                }
+                if (stepLabel) stepLabel.textContent = 'Gagal';
+                if (tEl) tEl.textContent = 'Proses Terhenti';
+                if (timeoutNotice) {
+                    timeoutNotice.classList.remove('hidden');
+                    timeoutNotice.classList.add('flex');
+                    timeoutNotice.innerHTML = `
+                        <span class="text-rose-600 font-semibold">${err.message || 'Koneksi gagal'}</span>
+                        <button type="button" onclick="window.location.reload();" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-semibold text-xs mt-1">
+                            Tutup & Muat Ulang
+                        </button>
+                    `;
+                }
+            });
+        };
+
+        window.showAiFullscreenLoading = function(title = 'Menganalisis dengan AI...', subtitle = '') {
+            // Fallback standalone indicator
+            const overlay = document.getElementById('ai-fullscreen-overlay');
+            if (!overlay) return;
+            const tEl = document.getElementById('ai-overlay-title');
+            if (tEl && title) tEl.textContent = title;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Periksa notifikasi flash dari proses AJAX sebelumnya
+            const pendingAiSuccess = sessionStorage.getItem('ai_flash_success');
+            if (pendingAiSuccess) {
+                sessionStorage.removeItem('ai_flash_success');
+                if (typeof window.showAlertModal === 'function') {
+                    window.showAlertModal('Berhasil!', pendingAiSuccess, 'success');
+                }
+            }
             @if(session('success'))
                 if (typeof window.showAlertModal === 'function') {
                     window.showAlertModal('Berhasil!', `{!! addslashes(session('success')) !!}`, 'success');

@@ -36,7 +36,16 @@ class DatabaseSeeder extends Seeder
         Setting::set('kurikulum', 'Kurikulum Merdeka (Fase E & F)', 'Kurikulum');
         Setting::set('kepala_sekolah', 'Dr. H. Bambang Sutrisno, M.Pd.', 'Kepala Sekolah');
         if (!Setting::get('ai_provider')) {
-            Setting::set('ai_provider', config('services.ai.provider', 'openai'), 'AI Provider');
+            Setting::set('ai_provider', config('services.ai.provider', 'router9'), 'AI Provider');
+        }
+        if (config('services.router9.api_key')) {
+            Setting::set('router9_api_key', config('services.router9.api_key'), 'Router9 API Key');
+        }
+        if (config('services.router9.model')) {
+            Setting::set('router9_model', config('services.router9.model'), 'Router9 Model');
+        }
+        if (config('services.router9.base_url')) {
+            Setting::set('router9_base_url', config('services.router9.base_url'), 'Router9 Base URL');
         }
         if (config('services.openai.api_key')) {
             Setting::set('openai_api_key', config('services.openai.api_key'), 'OpenAI API Key');
@@ -455,8 +464,11 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 7. Generate Personalisasi AI untuk seluruh siswa
-        $service = new PersonalizationService();
-        $service->generateAll();
+        // 7. Generate Personalisasi awal untuk seluruh siswa secara cepat tanpa membakar kuota token API saat seeding
+        $aiService = new \App\Services\AiPersonalizationService();
+        foreach ($createdSiswas as $siswa) {
+            $siswa->loadMissing('nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran');
+            $aiService->fallbackGenerate($siswa, $siswa->nilaiSumatifTps, 'Inisialisasi Data Awal Sistem (Siap dianalisis ulang dengan AI)');
+        }
     }
 }
