@@ -34,6 +34,11 @@ class Siswa extends Model
      */
     public function getRataRataNilaiAttribute(): float
     {
+        if ($this->relationLoaded('nilaiSumatifTps')) {
+            $avg = $this->nilaiSumatifTps->avg('nilai');
+            return $avg ? round((float) $avg, 2) : 0.00;
+        }
+
         $avg = $this->nilaiSumatifTps()->avg('nilai');
         return $avg ? round((float) $avg, 2) : 0.00;
     }
@@ -43,6 +48,10 @@ class Siswa extends Model
      */
     public function getJumlahTpTuntasAttribute(): int
     {
+        if ($this->relationLoaded('nilaiSumatifTps')) {
+            return $this->nilaiSumatifTps->where('status_ketuntasan', 'Tuntas')->count();
+        }
+
         return $this->nilaiSumatifTps()->where('status_ketuntasan', 'Tuntas')->count();
     }
 
@@ -51,6 +60,10 @@ class Siswa extends Model
      */
     public function getJumlahTpBelumTuntasAttribute(): int
     {
+        if ($this->relationLoaded('nilaiSumatifTps')) {
+            return $this->nilaiSumatifTps->where('status_ketuntasan', 'Belum Tuntas')->count();
+        }
+
         return $this->nilaiSumatifTps()->where('status_ketuntasan', 'Belum Tuntas')->count();
     }
 }

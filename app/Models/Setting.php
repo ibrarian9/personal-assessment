@@ -17,10 +17,22 @@ class Setting extends Model
         'deskripsi',
     ];
 
+    /**
+     * Cache in-memory per-request untuk menghindari N+1 query ke tabel settings
+     */
+    protected static ?array $runtimeCache = null;
+
     public static function get(string $key, $default = null)
     {
-        $setting = static::where('key', $key)->first();
-        return $setting ? $setting->value : $default;
+        if (static::$runtimeCache === null) {
+            try {
+                static::$runtimeCache = static::pluck('value', 'key')->all();
+            } catch (\Throwable $e) {
+                return $default;
+            }
+        }
+
+        return static::$runtimeCache[$key] ?? $default;
     }
 
     public static function set(string $key, $value, ?string $deskripsi = null): void
@@ -29,5 +41,14 @@ class Setting extends Model
             ['key' => $key],
             ['value' => $value, 'deskripsi' => $deskripsi]
         );
+
+        if (static::$runtimeCache !== null) {
+            static::$runtimeCache[$key] = $value;
+        }
+    }
+
+    public static function clearRuntimeCache(): void
+    {
+        static::$runtimeCache = null;
     }
 }

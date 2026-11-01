@@ -28,7 +28,7 @@ class LaporanController extends Controller
                         $sq->where('mata_pelajaran_id', $selectedMapelId);
                     });
                 }
-            }, 'nilaiSumatifTps.tujuanPembelajaran'])
+            }])
             ->orderBy('nama')
             ->get();
 
@@ -43,11 +43,19 @@ class LaporanController extends Controller
             });
         }
 
-        $totalTuntas = (clone $allScores)->where('status_ketuntasan', 'Tuntas')->count();
-        $totalBelumTuntas = (clone $allScores)->where('status_ketuntasan', 'Belum Tuntas')->count();
-        $rataRataKelas = round((float) (clone $allScores)->avg('nilai'), 2);
-        $nilaiTertinggi = (clone $allScores)->max('nilai') ?? 0;
-        $nilaiTerendah = (clone $allScores)->min('nilai') ?? 0;
+        $stats = (clone $allScores)->selectRaw('
+            COUNT(CASE WHEN status_ketuntasan = "Tuntas" THEN 1 END) as total_tuntas,
+            COUNT(CASE WHEN status_ketuntasan = "Belum Tuntas" THEN 1 END) as total_belum_tuntas,
+            AVG(nilai) as rata_rata,
+            MAX(nilai) as nilai_tertinggi,
+            MIN(nilai) as nilai_terendah
+        ')->first();
+
+        $totalTuntas = (int) ($stats->total_tuntas ?? 0);
+        $totalBelumTuntas = (int) ($stats->total_belum_tuntas ?? 0);
+        $rataRataKelas = $stats->rata_rata !== null ? round((float) $stats->rata_rata, 2) : 0.00;
+        $nilaiTertinggi = (float) ($stats->nilai_tertinggi ?? 0);
+        $nilaiTerendah = (float) ($stats->nilai_terendah ?? 0);
 
         return view('laporan.index', compact(
             'mapels',

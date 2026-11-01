@@ -166,45 +166,74 @@ class PenilaianController extends Controller
         $kkm = (float) $mapel->kkm;
 
         $affectedSiswaIds = [];
+        $siswaIds = array_keys($matrixScores);
+        $siswasMap = Siswa::whereIn('id', $siswaIds)->get()->keyBy('id');
+        $allTpsMap = TujuanPembelajaran::all()->keyBy('id');
 
-        foreach ($matrixScores as $siswaId => $tpScores) {
-            $siswa = Siswa::find($siswaId);
-            if (!$siswa) continue;
+        // Ambil data nilai yang sudah ada di database untuk deteksi perubahan aktual
+        $existingScores = NilaiSumatifTp::whereIn('siswa_id', $siswaIds)
+            ->get()
+            ->groupBy('siswa_id');
 
-            $affectedSiswaIds[] = $siswa->id;
+        \Illuminate\Support\Facades\DB::transaction(function () use ($matrixScores, $siswasMap, $allTpsMap, $kkm, $existingScores, &$affectedSiswaIds) {
+            foreach ($matrixScores as $siswaId => $tpScores) {
+                $siswa = $siswasMap->get($siswaId);
+                if (!$siswa) continue;
 
-            foreach ($tpScores as $tpId => $nilaiRaw) {
-                if ($nilaiRaw === null || $nilaiRaw === '') continue;
+                $studentExisting = $existingScores->get($siswaId)?->keyBy('tujuan_pembelajaran_id');
+                $isStudentModified = false;
 
-                $nilai = max(0, min(100, (float) $nilaiRaw));
-                $tp = TujuanPembelajaran::find($tpId);
-                $target = $tp ? $tp->target_ketercapaian : $kkm;
-                $status = NilaiSumatifTp::tentukanKetuntasan($nilai, $target);
+                foreach ($tpScores as $tpId => $nilaiRaw) {
+                    if ($nilaiRaw === null || $nilaiRaw === '') continue;
 
-                NilaiSumatifTp::updateOrCreate(
-                    [
-                        'siswa_id' => $siswa->id,
-                        'tujuan_pembelajaran_id' => $tpId,
-                    ],
-                    [
-                        'nilai' => $nilai,
-                        'status_ketuntasan' => $status,
-                        'catatan' => $status === 'Tuntas' ? 'Tuntas mencapai target TP' : 'Perlu bimbingan remedial',
-                    ]
-                );
+                    $nilai = max(0, min(100, (float) $nilaiRaw));
+                    $existingItem = $studentExisting?->get($tpId);
+
+                    // Hanya simpan jika nilai berubah atau belum pernah ada
+                    if (!$existingItem || (float) $existingItem->nilai !== $nilai) {
+                        $tp = $allTpsMap->get($tpId);
+                        $target = $tp ? $tp->target_ketercapaian : $kkm;
+                        $status = NilaiSumatifTp::tentukanKetuntasan($nilai, $target);
+
+                        NilaiSumatifTp::updateOrCreate(
+                            [
+                                'siswa_id' => $siswa->id,
+                                'tujuan_pembelajaran_id' => $tpId,
+                            ],
+                            [
+                                'nilai' => $nilai,
+                                'status_ketuntasan' => $status,
+                                'catatan' => $status === 'Tuntas' ? 'Tuntas mencapai target TP' : 'Perlu bimbingan remedial',
+                            ]
+                        );
+
+                        $isStudentModified = true;
+                    }
+                }
+
+                if ($isStudentModified) {
+                    $affectedSiswaIds[] = $siswa->id;
+                }
+            }
+        });
+
+        // Sinkronkan data diagnostik secara instan hanya untuk siswa yang nilainya benar-benar berubah
+        if (!empty($affectedSiswaIds)) {
+            $affectedStudents = Siswa::with('nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran')
+                ->whereIn('id', array_unique($affectedSiswaIds))
+                ->get();
+            foreach ($affectedStudents as $s) {
+                $this->personalizationService->fallbackGenerate($s, 'Sinkronisasi instan matriks nilai');
             }
         }
 
-        // Refresh personalisasi untuk siswa yang nilainya diupdate
-        foreach (array_unique($affectedSiswaIds) as $sId) {
-            $s = Siswa::find($sId);
-            if ($s) {
-                $this->personalizationService->generateForSiswa($s);
-            }
-        }
+        $count = count($affectedSiswaIds);
+        $message = $count > 0
+            ? "Matriks nilai sumatif per TP berhasil disimpan ({$count} siswa diperbarui)!"
+            : 'Matriks nilai telah sesuai, tidak ada perubahan data.';
 
         return redirect()->route('penilaian.matrix', ['mata_pelajaran_id' => $mapelId, 'kelas' => $kelas])
-            ->with('success', 'Matriks nilai sumatif per TP berhasil disimpan dan personalisasi AI telah disinkronkan!');
+            ->with('success', $message);
     }
 
     public function create(Request $request): View

@@ -28,7 +28,7 @@ class PersonalisasiController extends Controller
         $gayaBelajar = $request->query('gaya_belajar');
         $search = $request->query('search');
 
-        $query = Personalisasi::with(['siswa.nilaiSumatifTps.tujuanPembelajaran.lingkupMateri']);
+        $query = Personalisasi::with('siswa');
 
         if ($kategori) {
             $query->where('kategori_pemahaman', $kategori);
@@ -45,16 +45,41 @@ class PersonalisasiController extends Controller
             });
         }
 
-        $personalisasis = $query->orderBy('skor_performa', 'desc')->paginate(10)->withQueryString();
+        $perPageRaw = $request->query('per_page', '25');
+        $perPage = ($perPageRaw === 'all' || (int)$perPageRaw <= 0) ? 1000 : (int)$perPageRaw;
+
+        // Ambil daftar seluruh siswa (mencakup semua slide / halaman) yang sesuai dengan filter
+        $allQueue = (clone $query)->orderBy('skor_performa', 'desc')->get(['id', 'siswa_id']);
+        $allStudentsQueue = $allQueue->map(function ($p) {
+            return [
+                'siswa_id' => $p->siswa_id,
+                'nama' => $p->siswa->nama ?? 'Siswa',
+                'analyze_url' => route('personalisasi.ai-analyze', $p->siswa_id),
+            ];
+        })->values();
+
+        $personalisasis = $query->orderBy('skor_performa', 'desc')->paginate($perPage)->withQueryString();
 
         // Summary statistics
-        $stats = [
-            'tinggi' => Personalisasi::where('kategori_pemahaman', 'Tinggi')->count(),
-            'sedang' => Personalisasi::where('kategori_pemahaman', 'Sedang')->count(),
-            'pendampingan' => Personalisasi::where('kategori_pemahaman', 'Perlu Pendampingan')->count(),
-        ];
+        $stats = array_merge([
+            'tinggi' => 0,
+            'sedang' => 0,
+            'pendampingan' => 0,
+        ], Personalisasi::selectRaw('
+            COUNT(CASE WHEN kategori_pemahaman = "Tinggi" THEN 1 END) as tinggi,
+            COUNT(CASE WHEN kategori_pemahaman = "Sedang" THEN 1 END) as sedang,
+            COUNT(CASE WHEN kategori_pemahaman = "Perlu Pendampingan" THEN 1 END) as pendampingan
+        ')->first()?->toArray() ?? []);
 
-        return view('personalisasi.index', compact('personalisasis', 'kategori', 'gayaBelajar', 'search', 'stats'));
+        return view('personalisasi.index', compact(
+            'personalisasis',
+            'kategori',
+            'gayaBelajar',
+            'search',
+            'stats',
+            'allStudentsQueue',
+            'perPageRaw'
+        ));
     }
 
     public function show(Siswa $siswa): View
@@ -129,6 +154,25 @@ class PersonalisasiController extends Controller
                 'success' => true,
                 'message' => $msg,
                 'redirect' => route('personalisasi.show', $siswa),
+                'data' => [
+                    'siswa_id' => $siswa->id,
+                    'nama' => $siswa->nama,
+                    'nisn' => $siswa->nisn ?? '-',
+                    'kelas' => $siswa->kelas ?? '-',
+                    'skor_performa' => (float) $personalisasi->skor_performa,
+                    'kategori_pemahaman' => $personalisasi->kategori_pemahaman,
+                    'tp_tuntas_count' => (int) $personalisasi->tp_tuntas_count,
+                    'tp_belum_tuntas_count' => (int) $personalisasi->tp_belum_tuntas_count,
+                    'gaya_belajar' => str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' dan '], $personalisasi->gaya_belajar_rekomendasi ?? $siswa->gaya_belajar ?? 'Visual'),
+                    'rekomendasi_materi' => \Illuminate\Support\Str::limit(str_replace(['Baca/Tulis', '/TP', 'per/TP', 'per-TP', ' / ', '/'], ['Baca dan Tulis', ' TP', 'per TP', 'per TP', ' atau ', ' atau '], $personalisasi->rekomendasi_materi ?? ''), 90),
+                    'rekomendasi_materi_full' => str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' atau '], $personalisasi->rekomendasi_materi ?? '-'),
+                    'rekomendasi_aktivitas' => str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' atau '], $personalisasi->rekomendasi_aktivitas ?? '-'),
+                    'catatan_guru' => str_replace(['Baca/Tulis', '/'], ['Baca dan Tulis', ' atau '], $personalisasi->catatan_guru ?? 'Belum ada catatan diagnostik guru.'),
+                    'sumber_analisis' => $source,
+                    'keterangan_sumber' => $personalisasi->keterangan_sumber ?? "Dianalisis via {$source}",
+                    'updated_at' => $personalisasi->updated_at ? $personalisasi->updated_at->timezone('Asia/Jakarta')->format('d M Y, H:i') : now()->timezone('Asia/Jakarta')->format('d M Y, H:i'),
+                    'detail_url' => route('personalisasi.show', $siswa),
+                ]
             ]);
         }
 

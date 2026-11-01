@@ -14,6 +14,7 @@ class AiPersonalizationService
     protected string $lastSource = 'Fallback Heuristik';
     protected ?string $lastReason = null;
     protected ?string $lastModel = null;
+    protected static array $unreachableEndpoints = [];
 
     public function getLastSource(): string
     {
@@ -149,6 +150,8 @@ class AiPersonalizationService
      */
     public function generateAll(): int
     {
+        @set_time_limit(0);
+        static::$unreachableEndpoints = [];
         $siswas = Siswa::with('nilaiSumatifTps.tujuanPembelajaran.lingkupMateri.mataPelajaran')->get();
         $count = 0;
 
@@ -169,10 +172,14 @@ class AiPersonalizationService
             $model = Setting::get('gemini_model', config('services.gemini.model', 'gemini-3.5-flash'));
             $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
+            if (isset(static::$unreachableEndpoints['gemini'])) {
+                return null;
+            }
+
             $prompt = $this->buildPrompt($siswa, $nilaiTps);
 
             $response = Http::timeout(25)
-                ->connectTimeout(8)
+                ->connectTimeout(5)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post($url, [
                     'contents' => [
@@ -197,10 +204,12 @@ class AiPersonalizationService
             } else {
                 if ($response->status() === 429) {
                     Cache::put('gemini_quota_exhausted', true, now()->addHours(6));
+                    static::$unreachableEndpoints['gemini'] = 'Kuota Google Gemini telah habis (429)';
                 }
                 Log::warning('Gemini AI call returned non-200: ' . $response->body());
             }
         } catch (\Throwable $e) {
+            static::$unreachableEndpoints['gemini'] = 'Koneksi ke Gemini gagal: ' . $e->getMessage();
             Log::error('Error calling Gemini AI: ' . $e->getMessage());
         }
 
@@ -216,10 +225,14 @@ class AiPersonalizationService
             $model = Setting::get('openai_model', config('services.openai.model', 'gpt-4o-mini'));
             $url = 'https://api.openai.com/v1/chat/completions';
 
+            if (isset(static::$unreachableEndpoints[$url])) {
+                return null;
+            }
+
             $prompt = $this->buildPrompt($siswa, $nilaiTps);
 
-            $response = Http::timeout(75)
-                ->connectTimeout(10)
+            $response = Http::timeout(25)
+                ->connectTimeout(5)
                 ->withToken($apiKey)
                 ->post($url, [
                     'model' => $model,
@@ -247,6 +260,7 @@ class AiPersonalizationService
                 Log::warning('OpenAI API call returned non-200: ' . $response->body());
             }
         } catch (\Throwable $e) {
+            static::$unreachableEndpoints[$url] = 'Koneksi ke OpenAI gagal: ' . $e->getMessage();
             Log::error('Error calling OpenAI API: ' . $e->getMessage());
         }
 
@@ -262,6 +276,11 @@ class AiPersonalizationService
             $model = $customModel ?: Setting::get('router9_model', config('services.router9.model', 'ag/gemini-3.8-flash'));
             $baseUrl = rtrim($customBaseUrl ?: Setting::get('router9_base_url', config('services.router9.base_url', 'https://api.router9.com/v1')), '/');
             $url = $baseUrl . '/chat/completions';
+
+            if (isset(static::$unreachableEndpoints[$url])) {
+                $this->lastReason = static::$unreachableEndpoints[$url];
+                return null;
+            }
 
             $prompt = $this->buildPrompt($siswa, $nilaiTps);
 
@@ -282,16 +301,16 @@ class AiPersonalizationService
                 'temperature' => 0.4,
             ];
 
-            $response = Http::timeout(120)
-                ->connectTimeout(15)
+            $response = Http::timeout(60)
+                ->connectTimeout(10)
                 ->withToken($apiKey)
                 ->post($url, $payload);
 
             // Jika gateway/model tertentu tidak mendukung response_format json_object (error 400), coba ulang tanpa response_format
             if (!$response->successful() && $response->status() === 400 && isset($payload['response_format'])) {
                 unset($payload['response_format']);
-                $response = Http::timeout(120)
-                    ->connectTimeout(15)
+                $response = Http::timeout(60)
+                    ->connectTimeout(10)
                     ->withToken($apiKey)
                     ->post($url, $payload);
             }
@@ -320,10 +339,16 @@ class AiPersonalizationService
             } else {
                 Log::warning('Router9 API call returned non-200: ' . $response->body());
                 $this->lastReason = 'Router9 API mengembalikan status ' . $response->status() . ': ' . ($response->json('error.message') ?? $response->body());
+                if ($response->status() >= 500 || $response->status() === 429 || $response->status() === 401 || $response->status() === 403) {
+                    static::$unreachableEndpoints[$url] = $this->lastReason;
+                }
             }
         } catch (\Throwable $e) {
             Log::error('Error calling Router9 API: ' . $e->getMessage());
-            $this->lastReason = 'Koneksi ke Router9 gagal atau timeout (120s): ' . $e->getMessage();
+            $this->lastReason = 'Koneksi ke Router9 gagal atau timeout (60s): ' . $e->getMessage();
+            if (str_contains($e->getMessage(), 'Connection refused') || str_contains($e->getMessage(), 'Could not resolve host')) {
+                static::$unreachableEndpoints[$url] = $this->lastReason;
+            }
         }
 
         return null;
@@ -530,6 +555,10 @@ PROMPT;
         $analisisPerTp = $data['analisis_per_tp'] ?? [];
         $rekomendasiPerTp = $data['rekomendasi_per_tp'] ?? [];
 
+        if ($nilaiTps instanceof \Illuminate\Database\Eloquent\Collection) {
+            $nilaiTps->loadMissing(['tujuanPembelajaran.lingkupMateri.mataPelajaran']);
+        }
+
         foreach ($nilaiTps as $item) {
             $kode = $item->tujuanPembelajaran->kode_tp ?? '';
             $rek = null;
@@ -573,7 +602,9 @@ PROMPT;
             $cleanRek = str_replace(['/TP', 'per/TP', 'per-TP'], [' TP', 'per TP', 'per TP'], $cleanRek);
             $cleanRek = str_replace([' / ', '/'], [' atau ', ' atau '], $cleanRek);
             $cleanRek = str_replace(['—', '–'], [':', '-'], $cleanRek);
-            $item->update(['catatan' => $cleanRek]);
+            if ($item->catatan !== $cleanRek) {
+                $item->update(['catatan' => $cleanRek]);
+            }
         }
 
         $catatanGuru = $data['catatan_guru'] ?? 'Rekomendasi Guru (AI): Analisis capaian kompetensi TP dihasilkan secara otomatis berdasarkan modalitas belajar siswa SMA.';
@@ -622,6 +653,10 @@ PROMPT;
      */
     public function fallbackGenerate(Siswa $siswa, $nilaiTps, ?string $alasan = null): Personalisasi
     {
+        if ($nilaiTps instanceof \Illuminate\Database\Eloquent\Collection) {
+            $nilaiTps->loadMissing(['tujuanPembelajaran.lingkupMateri.mataPelajaran']);
+        }
+
         $rataRata = $nilaiTps->count() > 0 ? (float) $nilaiTps->avg('nilai') : 0;
         $tpTuntas = $nilaiTps->where('status_ketuntasan', 'Tuntas')->count();
         $tpBelumTuntas = $nilaiTps->where('status_ketuntasan', 'Belum Tuntas')->count();
@@ -653,7 +688,10 @@ PROMPT;
 
         // Update rekomendasi per TP (3 butir per TP) untuk seluruh nilai TP
         foreach ($nilaiTps as $item) {
-            $item->update(['catatan' => $this->generateTpRecommendation($item, $gayaBelajar)]);
+            $rec = $this->generateTpRecommendation($item, $gayaBelajar);
+            if ($item->catatan !== $rec) {
+                $item->update(['catatan' => $rec]);
+            }
         }
 
         $materiMap = [

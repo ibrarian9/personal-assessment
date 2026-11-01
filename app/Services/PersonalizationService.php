@@ -29,4 +29,12 @@ class PersonalizationService
     {
         return $this->aiService->generateForSiswa($siswa);
     }
+
+    /**
+     * Fallback cepat analisis personalisasi untuk seorang siswa (tanpa network call)
+     */
+    public function fallbackGenerate(Siswa $siswa, ?string $alasan = null): Personalisasi
+    {
+        return $this->aiService->fallbackGenerate($siswa, $siswa->nilaiSumatifTps, $alasan);
+    }
 }
